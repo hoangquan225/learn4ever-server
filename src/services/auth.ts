@@ -54,5 +54,28 @@ class AuthServices {
         }
         return userInfo;
     }
+    register = async (body: UserInfo): Promise<UserInfo> => {
+        // let newPass = this.processPass(body);
+        let userInfo = new UserInfo(body);
+
+        let checkUserAcc: UserInfo | null = await UserModel.findOne({ account: userInfo.account }).populate("departmentId");
+        try {
+            if(checkUserAcc!) {
+                userInfo.loginCode = KSInternalConfig.LOGIN_ACCOUNT_IS_USED;
+            }else {
+                const userInfo = new UserInfo(body) //  luu DB >???
+                const createUser = await UserModel.create(userInfo)
+                if (!createUser) {
+                    // return  res.status(400).json('lỗi');
+                }else {
+                    return userInfo;
+                }
+            }
+        }catch (err) {
+            userInfo.loginCode = KSInternalConfig.LOGIN_ACCOUNT_IS_USED;
+        }
+
+        return userInfo;
+    }
 }
 export { AuthServices }
