@@ -7,7 +7,7 @@ import asyncHandler from '../utils/async_handle';
 
 import jwtToken from '../utils/jwtToken';
 import fs from 'fs'
-import { UserInfo } from '../../models/user';
+import { UserInfo } from '../../submodule/models/user';
 
 const authService = new AuthServices();
 authRouter.post('/login', asyncHandler(async (req, res) => {
