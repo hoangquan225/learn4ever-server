@@ -1,5 +1,5 @@
-import KSInternalConfig from "../../common/config";
-import { UserInfo } from "../../models/user";
+import KSInternalConfig from "../../submodule/common/config";
+import { UserInfo } from "../../submodule/models/user";
 import ServerConfig from "../config";
 import { UserModel } from "../models/mongo/users";
 import { decrypt, encodeSHA256Pass } from "../utils/crypto";

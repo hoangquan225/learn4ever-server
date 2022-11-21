@@ -1,6 +1,6 @@
 import mongoose, { Document, Model, model, Types } from "mongoose";
 // import { departmentTable } from "./departments";
-import { UserInfo } from '../../../models/user';
+import { UserInfo } from '../../../submodule/models/user';
 export const userTableName = "User";
 interface IUserSchema extends Model<UserInfoDoc> {
 
