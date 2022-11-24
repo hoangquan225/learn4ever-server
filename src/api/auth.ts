@@ -40,13 +40,20 @@ authRouter.post('/confirm-password', asyncHandler(async (req, res) => {
     }
 }))
 
+export interface params { 
+    password: string, 
+    account: string, 
+}
+
 authRouter.post('/register', asyncHandler(async (req, res) => {
-    const body: UserInfo = req.body;
+    const body: params = req.body;
+    console.log({body});
+    
     if (!body.account || !body.password) {
         res.sendStatus(403)
     } else {
         const userRegister = await authService.register(body);
-        return res.json(userRegister);
+        return res.json(userRegister.loginCode);
     }
 }));
 

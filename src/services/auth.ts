@@ -1,5 +1,6 @@
 import KSInternalConfig from "../../submodule/common/config";
 import { UserInfo } from "../../submodule/models/user";
+import { params } from "../api/auth";
 import ServerConfig from "../config";
 import { UserModel } from "../models/mongo/users";
 import { decrypt, encodeSHA256Pass } from "../utils/crypto";
@@ -24,7 +25,7 @@ class AuthServices {
         let userInfo = new UserInfo({ ...body, password: newPass });
         if (newPass) {
             userInfo.password = newPass;
-            let checkUserAcc: UserInfo | null = await UserModel.findOne({ account: userInfo.account }).populate("departmentId");
+            let checkUserAcc: UserInfo | null = await UserModel.findOne({ account: userInfo.account });
             if (checkUserAcc) {
                 if (newPass === checkUserAcc.password) {
 
@@ -54,25 +55,21 @@ class AuthServices {
         }
         return userInfo;
     }
-    register = async (body: UserInfo): Promise<UserInfo> => {
-        // let newPass = this.processPass(body);
+    register = async (body: params): Promise<UserInfo> => {
         let userInfo = new UserInfo(body);
 
-        let checkUserAcc: UserInfo | null = await UserModel.findOne({ account: userInfo.account }).populate("departmentId");
         try {
-            if(checkUserAcc!) {
-                userInfo.loginCode = KSInternalConfig.LOGIN_ACCOUNT_IS_USED;
+        
+        let checkUserAcc: UserInfo | null = await UserModel.findOne({ account: userInfo.account });
+            if(!checkUserAcc) {
+                await UserModel.create(userInfo)
+                userInfo.loginCode = KSInternalConfig.LOGIN_SUCCESS;
             }else {
-                const userInfo = new UserInfo(body) //  luu DB >???
-                const createUser = await UserModel.create(userInfo)
-                if (!createUser) {
-                    // return  res.status(400).json('lỗi');
-                }else {
-                    return userInfo;
-                }
+                console.log('eror');
+                userInfo.loginCode = KSInternalConfig.LOGIN_ACCOUNT_IS_USED;
             }
         }catch (err) {
-            userInfo.loginCode = KSInternalConfig.LOGIN_ACCOUNT_IS_USED;
+            userInfo.loginCode = KSInternalConfig.LOGIN_FAILED;
         }
 
         return userInfo;
