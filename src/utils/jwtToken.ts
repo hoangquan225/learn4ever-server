@@ -1,42 +1,17 @@
 
-import jwt from 'jsonwebtoken';
+import { sign } from 'jsonwebtoken';
+import { jwtSecret, TOKEN_EXPIRED } from '../constrain';
 
-let generateToken = (user, secretSignature, tokenLife) => {
-    return new Promise((resolve, reject) => {
-        // Định nghĩa những thông tin của user 
-        const UserInfo = {
-
-        }
-        // Thực hiện ký và tạo token
-        jwt.sign(
-            { data: UserInfo },
-            secretSignature,
-            {
-                algorithm: "HS256",
-                expiresIn: tokenLife,
-            },
-            (error, token) => {
-                if (error) {
-                    return reject(error);
-                }
-                resolve(token);
-            });
-    });
+export type TokenData = {
+    _id: string;
+    iat?: number;
+    exp?: number;
+    from?: number;
 }
 
-let verifyToken = (token, secretKey) => {
-    return new Promise((resolve, reject) => {
-        jwt.verify(token, secretKey, (error, decoded) => {
-            if (error) {
-                return reject(error);
-            }
-            resolve(decoded);
-        });
-    });
-}
+export function jwtEncode(userId: any, expiresIn = TOKEN_EXPIRED) {
+    const payload: TokenData = { _id: userId };
 
-export default {
-    generateToken: generateToken,
-    verifyToken: verifyToken,
-};
+    return sign(payload, jwtSecret, { expiresIn });
+}
   

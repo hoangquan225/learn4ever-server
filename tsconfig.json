@@ -102,7 +102,7 @@
       "./src/**/*",
       "./index.ts",
       "./server.ts"
-    ],
+, "submodule"    ],
     "exclude": [
       "node_modules"
     ]

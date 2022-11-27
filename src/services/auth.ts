@@ -1,9 +1,8 @@
-import KSInternalConfig from "../../submodule/common/config";
-import { UserInfo } from "../../submodule/models/user";
-import { params } from "../api/auth";
-import ServerConfig from "../config";
+import TTCSconfig from "../submodule/common/config";
+import { UserInfo } from "../submodule/models/user";
 import { UserModel } from "../models/mongo/users";
 import { decrypt, encodeSHA256Pass } from "../utils/crypto";
+import { jwtEncode } from "../utils/jwtToken";
 
 class AuthServices {
     processPass(userObject: {
@@ -28,51 +27,49 @@ class AuthServices {
             let checkUserAcc: UserInfo | null = await UserModel.findOne({ account: userInfo.account });
             if (checkUserAcc) {
                 if (newPass === checkUserAcc.password) {
-
-                    // temp login sucess
-                    // let x: UserRole | null = await this.userRoleDB.findUserRoleForClassesManager(
-                    //     checkUserAcc._id,
-                    // );
-                    // checkUserAcc.classesMngRole = x;
                     userInfo = new UserInfo(checkUserAcc);
-                    userInfo.loginCode = KSInternalConfig.LOGIN_SUCCESS;
-                    // userInfo.token = jwtEncode(userInfo._id, [userInfo.userRoles]);
-                    // await this.saveUserSession({
-                    //     userId: userInfo._id,
-                    //     token: userInfo.token,
-                    // });
+                    userInfo.loginCode = TTCSconfig.LOGIN_SUCCESS;
                 } else {
-                    // wrong password
                     userInfo.password = "";
-                    userInfo.loginCode = KSInternalConfig.LOGIN_WRONG_PASSWORD;
+                    userInfo.loginCode = TTCSconfig.LOGIN_WRONG_PASSWORD;
                 }
             } else {
-                userInfo.loginCode = KSInternalConfig.LOGIN_ACCOUNT_NOT_EXIST;
+                userInfo.loginCode = TTCSconfig.LOGIN_ACCOUNT_NOT_EXIST;
             }
         } else {
-            // has problem in process password:
-            userInfo.loginCode = KSInternalConfig.LOGIN_WRONG_PASSWORD;
+            userInfo.loginCode = TTCSconfig.LOGIN_WRONG_PASSWORD;
         }
         return userInfo;
     }
-    register = async (body: params): Promise<UserInfo> => {
+    register = async (body: UserInfo): Promise<UserInfo> => {
         let userInfo = new UserInfo(body);
-
         try {
-        
-        let checkUserAcc: UserInfo | null = await UserModel.findOne({ account: userInfo.account });
+            const account = userInfo.account?.trim().toLowerCase();
+            const password = userInfo.password;
+            const checkUserAcc: UserInfo | null = await UserModel.findOne({ account });
             if(!checkUserAcc) {
-                await UserModel.create(userInfo)
-                userInfo.loginCode = KSInternalConfig.LOGIN_SUCCESS;
-            }else {
-                console.log('eror');
-                userInfo.loginCode = KSInternalConfig.LOGIN_ACCOUNT_IS_USED;
+                const plainPwd= decrypt(password);
+                // encode password 
+                const passEncode = encodeSHA256Pass(account, plainPwd) ;
+                // luu vao db
+                const newUser = await UserModel.create({
+                    ...userInfo, 
+                    password: passEncode,
+                    registerDate: Date.now(),
+                    status: TTCSconfig.UserStatus.NORMAL, 
+                    lastLogin: Date.now()
+                })
+                const token = jwtEncode(newUser?._id, 2592000);
+                return {
+                    ...newUser, password: '', loginCode: TTCSconfig.LOGIN_SUCCESS, token
+                  };
             }
+                return {...userInfo , loginCode : TTCSconfig.LOGIN_ACCOUNT_IS_USED}
         }catch (err) {
-            userInfo.loginCode = KSInternalConfig.LOGIN_FAILED;
+            userInfo.loginCode = TTCSconfig.LOGIN_FAILED;
         }
 
         return userInfo;
     }
 }
-export { AuthServices }
+export { AuthServices };
