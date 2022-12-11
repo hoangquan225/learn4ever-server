@@ -31,9 +31,14 @@ class App {
     constructor() {
         this.app = express();
         this.server = http.createServer(this.app);
-        this.port = process.env.PORT || 3001;
+        this.port = process.env.PORT || 3000;
         this.config();
         this.useAPI();
+    }
+    private useAPI() {
+        console.log('hello');
+        // Web
+        this.app.use(PREFIX_API, webRouters);
     }
     run() {
         connectDatabase(() => {
@@ -53,11 +58,6 @@ class App {
             // }
         });
     }
-    private useAPI() {
-        console.log('hello');
-        
-        // Web
-        this.app.use(PREFIX_API, webRouters);
-    }
+    
 }
 export { App };
