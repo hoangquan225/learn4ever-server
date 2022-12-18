@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authRouter } from '../api/auth';
+import { authRouter } from '../api/web/auth';
 // import { deparmentRouter } from '../api/departments';
 // import { timeSheetsRouter } from '../api/timesheets';
 // import { uploadRouter } from '../api/upload';

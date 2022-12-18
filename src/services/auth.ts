@@ -1,8 +1,8 @@
 import TTCSconfig from "../submodule/common/config";
 import { UserInfo } from "../submodule/models/user";
 import { UserModel } from "../models/mongo/users";
-import { decrypt, encodeSHA256Pass, encrypt } from "../utils/crypto";
-import { jwtEncode } from "../utils/jwtToken";
+import { decrypt, encodeSHA256Pass, encrypt } from "../submodule/utils/crypto";
+import { jwtDecodeToken, jwtEncode } from "../utils/jwtToken";
 
 class AuthServices {
     private processPass(userObject: {
@@ -22,7 +22,7 @@ class AuthServices {
                 if (passEncode === checkUserAcc.password) {
                     userInfo = new UserInfo(checkUserAcc);
                     userInfo.loginCode = TTCSconfig.LOGIN_SUCCESS;
-                    userInfo.token = jwtEncode(userInfo?._id, 2592000);
+                    userInfo.token = jwtEncode(userInfo?._id, 60*60*24*30);
                     // update lastLogin
                 } else {
                     userInfo.loginCode = TTCSconfig.LOGIN_WRONG_PASSWORD;
@@ -63,5 +63,15 @@ class AuthServices {
             userInfo.loginCode = TTCSconfig.LOGIN_FAILED;
         }
     }
+    // logout =async (token:string) => {
+    //     const tokenData = jwtDecodeToken(token);
+    //     if (!!token && typeof tokenData !== "string") {
+    //     const _tokenData = (tokenData as any) as TokenData;
+    //     const { _id, iat, exp } = _tokenData;
+    //     const tokenKey = `${REVOKED_TOKEN_KEY}${iat}_${_id}`;
+    //     const time = Math.abs(moment().diff(exp! * 1000, "seconds"));
+    //     userCacheClient.setex(tokenKey, time, token);
+    //     }
+    // }
 }
 export { AuthServices };
