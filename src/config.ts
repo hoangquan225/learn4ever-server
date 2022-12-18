@@ -1,4 +1,4 @@
-import { decrypt, encodeSHA256Pass } from './utils/crypto';
+import { decrypt, encodeSHA256Pass } from './submodule/utils/crypto';
 import dotenv from './utils/dotenv';
 
 dotenv.config();
