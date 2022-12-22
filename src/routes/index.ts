@@ -3,7 +3,7 @@ import { authRouter } from '../api/auth';
 // import { deparmentRouter } from '../api/departments';
 // import { timeSheetsRouter } from '../api/timesheets';
 // import { uploadRouter } from '../api/upload';
-// import { userRouter } from '../api/user';
+import { userRouter } from '../api/user';
 // import { eventRouter } from '../api/event'
 // import { formRouter } from '../api/form';
 // import { statisticTimesheetsRouter } from '../api/statistic_timesheet';
@@ -12,7 +12,7 @@ import { authRouter } from '../api/auth';
 const router = Router();
 
 router.use(authRouter);
-// router.use(userRouter);
+router.use(userRouter);
 // router.use(deparmentRouter);
 // router.use(timeSheetsRouter);
 // router.use(uploadRouter);

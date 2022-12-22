@@ -7,6 +7,7 @@ import { isValidEmail } from "../submodule/utils/validation";
 import { BadRequestError } from '../common/errors';
 import TTCSconfig from '../submodule/common/config';
 import { getCookieOptions } from '../utils/cookie';
+import Cookies from 'js-cookie';
 const authRouter = express.Router();
 
 const authService = new AuthServices();
@@ -15,13 +16,11 @@ authRouter.post('/login', asyncHandler(async (req, res) => {
     if (!body.account || !body.password) {
         throw res.json(new BadRequestError('invalid account or password'));
     } else {
-        const {loginCode,  token,...userLogin} = await authService.login(body);
-        if(loginCode === TTCSconfig.LOGIN_SUCCESS){
-            res.cookie('token', token, { ...getCookieOptions() });
-        }
+        const { loginCode, token, ...userLogin } = await authService.login(body);
         return res.json({
             loginCode,
-            userLogin
+            userLogin,
+            token
         });
     }
 }));
@@ -33,17 +32,17 @@ authRouter.post('/logout', asyncHandler(async (req, res) => {
 
 authRouter.post('/register', asyncHandler(async (req, res) => {
     const body = <UserInfo>req.body;
-    
+
     if (!body.account || !body.password) throw res.json(new BadRequestError('invalid account or password'));
-    if(!isValidEmail(body?.email || '')) throw res.json(new BadRequestError('invalid email'));
+    if (!isValidEmail(body?.email || '')) throw res.json(new BadRequestError('invalid email'));
 
-    const {loginCode,  token ,...registerData } = await authService.register(body);
+    const { loginCode, token, ...registerData } = await authService.register(body);
 
-    if(loginCode === TTCSconfig.LOGIN_SUCCESS){
+    if (loginCode === TTCSconfig.LOGIN_SUCCESS) {
         res.cookie('token', token, { ...getCookieOptions() });
     }
 
-    return res.json({loginCode, info: registerData});
+    return res.json({ loginCode, info: registerData });
 }));
 
 export { authRouter };

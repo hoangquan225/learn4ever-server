@@ -42,24 +42,30 @@ class AuthServices {
             const account = userInfo.account?.trim().toLowerCase();
             const password = userInfo.password;
             const checkUserAcc: UserInfo | null = await UserModel.findOne({ account });
-            if(!checkUserAcc) {
-                const passEncode = this.processPass({account,password})
-                
+            if (!checkUserAcc) {
+                // const encodePassWord = encrypt(password)
+                // console.log({encodePassWord});
+                // const decodePassWord = decrypt(encodePassWord);
+                // console.log({decodePassWord});
+
+                const passEncode = this.processPass({ account, password })
+
                 // luu vao db
-                const newUser = await UserModel.create({
-                    ...userInfo, 
+                const newUserInfo = {
+                    ...userInfo,
                     password: passEncode,
                     registerDate: Date.now(),
-                    status: TTCSconfig.UserStatus.NORMAL, 
+                    status: TTCSconfig.UserStatus.NORMAL,
                     lastLogin: Date.now()
-                })
+                }
+                const newUser = await UserModel.create(newUserInfo)
                 const token = jwtEncode(newUser?._id, 2592000);
                 return {
-                    ...newUser, loginCode: TTCSconfig.LOGIN_SUCCESS, token
+                    ...newUserInfo, _id: newUser._id, loginCode: TTCSconfig.LOGIN_SUCCESS, token
                 };
             }
-                return {...userInfo , loginCode : TTCSconfig.LOGIN_ACCOUNT_IS_USED}
-        }catch (err) {
+            return { ...userInfo, loginCode: TTCSconfig.LOGIN_ACCOUNT_IS_USED }
+        } catch (err) {
             userInfo.loginCode = TTCSconfig.LOGIN_FAILED;
         }
     }
