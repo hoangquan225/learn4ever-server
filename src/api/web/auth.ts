@@ -1,13 +1,12 @@
 import express from 'express';
-import ServerConfig from '../config';
-import { AuthServices } from '../services/auth';
-import asyncHandler from '../utils/async_handle';
-import { UserInfo } from '../submodule/models/user';
-import { isValidEmail } from "../submodule/utils/validation";
-import { BadRequestError } from '../common/errors';
-import TTCSconfig from '../submodule/common/config';
-import { getCookieOptions } from '../utils/cookie';
-import Cookies from 'js-cookie';
+import ServerConfig from '../../config';
+import { AuthServices } from '../../services/auth';
+import asyncHandler from '../../utils/async_handle';
+import { UserInfo } from '../../submodule/models/user';
+import { isValidEmail } from "../../submodule/utils/validation";
+import { BadRequestError } from '../../common/errors';
+import TTCSconfig from '../../submodule/common/config';
+import { getCookieOptions } from '../../utils/cookie';
 const authRouter = express.Router();
 
 const authService = new AuthServices();
