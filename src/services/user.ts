@@ -8,25 +8,7 @@ import { jwtDecodeToken } from '../utils/jwtToken';
 // import { UserDepartmentModel } from "../database/mongo/user_department";
 
 export default class UserService {
-    loadUserInfo = async (body: { userId: string }): Promise<UserInfo> => {
-        const user = await UserModel
-            .findOne({
-                status: TTCSconfig.STATUS_PUBLIC,
-                _id: body.userId
-            })
-        return new UserInfo(user);
-    }
-
-    // loadUsersByWorkStatus = async (body: { status: number[]; startDate?: number | undefined; endDate?: number | undefined; }) => {
-    //     const users = await UserModel
-    //         .find({
-    //             status: { $in: body.status },
-    //             userRole: TTCSconfig.STAFF
-    //         }).populate("departmentId")
-
-    //     return users.map(user => new UserInfo(user));
-    // }
-
+ 
     updateUserInfo = async (body: { userInfo: UserInfo }): Promise<UserInfo | null> => {
         const session = await mongoose.startSession();
         session.startTransaction();
@@ -79,37 +61,5 @@ export default class UserService {
                 userInfo: null
             }
         }
-
     }
-
-    // saveNewUser = async (body: { userInfo: UserInfo }): Promise<UserInfo | null> => {
-    //     const session = await mongoose.startSession();
-    //     session.startTransaction();
-    //     try {
-    //         const resUser = await new UserModel(body.userInfo).save();
-    //         resUser.$session();
-    //         const resUserDepartment = await new UserDepartmentModel({
-    //             userId: resUser._id,
-    //             departmentId: body.userInfo.departmentId
-    //         }).save();
-    //         resUserDepartment.$session();
-    //         session.commitTransaction();
-    //         return resUser;
-    //     } catch (err) {
-    //         session.abortTransaction();
-    //         return null
-    //     } finally {
-    //         session.endSession();
-    //     }
-    // }
-
-    // listUsers = async () => {
-    //     const fields: Array<keyof UserInfo> = ["_id", "account", "name", "avatar", "email", "userType", "userRole"];
-    //     const users = await UserModel.find({ status: TTCSconfig.STATUS_PUBLIC }).select(fields.join(" "));
-    //     return users.map((e) => {
-    //         const user = new UserInfo(e);
-    //         return _.pick(user, fields)
-    //     });
-    // }
-
 }
