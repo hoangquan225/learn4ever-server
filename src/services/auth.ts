@@ -1,6 +1,6 @@
 import TTCSconfig from "../submodule/common/config";
 import { UserInfo } from "../submodule/models/user";
-import { UserModel } from "../models/mongo/users";
+import { UserModel } from "../database/users";
 import { decrypt, encodeSHA256Pass, encrypt } from "../submodule/utils/crypto";
 import { jwtDecodeToken, jwtEncode } from "../utils/jwtToken";
 

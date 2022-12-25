@@ -13,7 +13,8 @@
     "build": "run-script-os",
     "build:default": "npm run pre-build && tsc -p . && npm run post-build && rm -rf dist && mv build dist",
     "build:macos": "npm run pre-build-mac && tsc -p . && npm run post-build-mac && rm -rf dist && mv build dist",
-    "dev": "cross-env NODE_ENV=development ts-node-dev --respawn --pretty server.ts"
+    "dev": "cross-env NODE_ENV=development ts-node-dev --respawn --pretty server.ts",
+    "pull-submodule": "cd src/submodule && git pull origin master && npm i"
   },
   "author": "",
   "license": "ISC",

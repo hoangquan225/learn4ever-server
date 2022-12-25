@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import TTCSconfig from '../submodule/common/config';
 // import { Department } from '../../../models/department';
 import { UserInfo } from "../submodule/models/user";
-import { UserModel } from "../models/mongo/users";
+import { UserModel } from "../database/users";
 import { jwtDecodeToken } from '../utils/jwtToken';
 // import { UserDepartmentModel } from "../database/mongo/user_department";
 

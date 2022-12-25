@@ -1,6 +1,6 @@
 import mongoose, { Document, Model, model, Types } from "mongoose";
 // import { departmentTable } from "./departments";
-import { UserInfo } from '../../submodule/models/user';
+import { UserInfo } from '../submodule/models/user';
 export const userTableName = "User";
 interface IUserSchema extends Model<UserInfoDoc> {
 
@@ -20,7 +20,6 @@ const UserSchema = new mongoose.Schema<UserInfoDoc, IUserSchema>(
         phoneNumber: {type: String, default: ''},
         address: {type: String, default: ''},
         facebookId: {type: String, default: ''},
-        userType: { type: Number, default: 0 },
         birth: { type: Number, default: 0 },
         gender: { type: Number, default: 0 },
         registerDate: { type: Number, default: 0 },
