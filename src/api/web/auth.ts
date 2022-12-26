@@ -7,7 +7,7 @@ import { isValidEmail } from "../../submodule/utils/validation";
 import { BadRequestError } from '../../common/errors';
 import TTCSconfig from '../../submodule/common/config';
 import { getCookieOptions } from '../../utils/cookie';
-import Endpoint from '../../submodule/common/endpont';
+import Endpoint from '../../submodule/common/endpoint';
 
 const authRouter = express.Router();
 
