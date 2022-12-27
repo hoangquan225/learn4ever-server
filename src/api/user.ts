@@ -10,12 +10,17 @@ const userRouter = express.Router();
 const userService = new UserService();
 
 userRouter.post(Endpoint.UPDATE_USER, asyncHandler(async (req, res) => {
-    const body: { userInfo: UserInfo } = req.body;
-    if (!body.userInfo['_id'] || !isValidObjectId(body.userInfo['_id'])) {
-        res.sendStatus(403); // bad request
+    // const body = <UserInfo>req.body;
+    const body: { token: string, userInfo: UserInfo } = req.body;
+
+    if (!body.token ) {
+        throw res.json(new BadRequestError('invalid info'));
     } else {
-        const responseDb = await userService.updateUserInfo(body);
-        res.json(responseDb)
+        const { status, userInfo } = await userService.updateUserInfo(body);
+        return res.json({
+            status,
+            userInfo,
+        });
     }
 }));
 
@@ -26,15 +31,15 @@ userRouter.post(Endpoint.GET_USER_FROM_TOKEN, asyncHandler(async (req, res) => {
 }));
 
 userRouter.post(Endpoint.CHANGE_PASSWORD, asyncHandler(async (req, res) => {
-    const body: { token: string, account: string, password: string, newPassword: string } = req.body;
+    const body: { token: string, password: string, newPassword: string } = req.body;
 
-    if (!body.newPassword || !body.password) {
+    if (!body.password || !body.newPassword) {
         throw res.json(new BadRequestError('invalid newPassword or password'));
     } else {
-        const { loginCode, ...userUpdate } = await userService.changePassword(body);
+        const { loginCode, ...UserInfo } = await userService.changePassword(body);
         return res.json({
             loginCode,
-            userUpdate,
+            UserInfo,
         });
     }
 }));

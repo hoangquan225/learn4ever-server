@@ -18,34 +18,29 @@ export default class UserService {
         return encodedPassword;
     }
 
-    updateUserInfo = async (body: { userInfo: UserInfo }): Promise<UserInfo | null> => {
-        const session = await mongoose.startSession();
-        session.startTransaction();
+    updateUserInfo = async (body: {token:string, userInfo: UserInfo} ): Promise<{
+        status: number,
+        userInfo: UserInfo | null,
+    }> => {
+        const tokenDecode = jwtDecodeToken(body.token);
+        let userInfo = new UserInfo(body.userInfo)
+        let status = TTCSconfig.STATUS_SUCCESS;
+
         try {
-            const findUser = await UserModel.findOne({ _id: body.userInfo._id });
-            const userUpdate = await UserModel.findOneAndUpdate({ _id: body.userInfo._id }, { $set: { ...body.userInfo } }, { new: true });
-            userUpdate?.$session();
+            // const findUser = await UserModel.findOne({ _id: body.userInfo._id });
+            const userUpdate = await UserModel.findOneAndUpdate({ _id: tokenDecode._id }, { $set: { ...body.userInfo } }, { new: true });
+            userInfo = new UserInfo(userUpdate);
 
-            /**
-             * Tạo bản ghi trong bảng userDepartment nếu là update department
-             */
-            // const department = new Department(findUser.departmentId);
-            // if (body.userInfo.departmentId !== department._id?.toString()) {
-            //     const resUserDepartment = await new UserDepartmentModel({
-            //         userId: userUpdate._id,
-            //         departmentId: userUpdate.departmentId
-            //     }).save();
-            //     resUserDepartment.$session();
-            // }
-
-            session.commitTransaction();
-            return new UserInfo(userUpdate);
+            return {
+                status,
+                userInfo
+            }
         } catch (err) {
-            session.abortTransaction();
-            return null
-        } finally {
-            session.endSession();
-        }
+            return {
+                status: TTCSconfig.STATUS_FAIL,
+                userInfo: null
+            }
+        } 
     }
 
     checkUserFromToken = async (token: string): Promise<{
@@ -75,8 +70,6 @@ export default class UserService {
     changePassword = async (body: { token: string, password: string, newPassword: string }): Promise<UserInfo> => {
         const { newPassword, token, password } = body;
         const tokenDecode = jwtDecodeToken(token);
-
-        // const passEncode = this.processPass(rest);
 
         let userInfo = new UserInfo();
         try {
