@@ -42,7 +42,7 @@ class App {
     }
     run() {
         connectDatabase(() => {
-            this.server.listen(this.port, () => {
+            this.server.listen(process.env.PORT || this.port, () => {
                 logger.info(`Server is running on port ${this.port}`);
             });
             // initSocket(this.server);
