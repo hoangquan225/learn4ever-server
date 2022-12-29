@@ -1,7 +1,10 @@
 {
   "name": "elearning-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "hung",
+  "engines": {
+    "node": "12.11.1"
+  },
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production node dist/elearning-server/server.js",
