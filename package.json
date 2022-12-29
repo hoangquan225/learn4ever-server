@@ -4,15 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node build/server.js",
+    "start": "cross-env NODE_ENV=production node dist/elearning-server/server.js",
     "postinstall": "tsc",
-    "pre-build": "grep -rl '\"outDir\": \"./dist\"' tsconfig.json | xargs sed -i 's#\"outDir\": \"./dist\"#\"outDir\": \"./build\"#g'",
-    "pre-build-mac": "grep -rl '\"outDir\": \"./dist\"' tsconfig.json | xargs sed -i '' 's#\"outDir\": \"./dist\"#\"outDir\": \"./build\"#g'",
-    "post-build": "grep -rl '\"outDir\": \"./build\"' tsconfig.json | xargs sed -i 's#\"outDir\": \"./build\"#\"outDir\": \"./dist\"#g'",
-    "post-build-mac": "grep -rl '\"outDir\": \"./build\"' tsconfig.json | xargs sed -i '' 's#\"outDir\": \"./build\"#\"outDir\": \"./dist\"#g'",
-    "build": "run-script-os",
-    "build:default": "npm run pre-build && tsc -p . && npm run post-build && rm -rf dist && mv build dist",
-    "build:macos": "npm run pre-build-mac && tsc -p . && npm run post-build-mac && rm -rf dist && mv build dist",
     "dev": "cross-env NODE_ENV=development ts-node-dev --respawn --pretty server.ts",
     "pull-submodule": "cd src/submodule && git pull origin master && npm i"
   },
