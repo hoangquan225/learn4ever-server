@@ -1,5 +1,4 @@
 import express from 'express';
-import ServerConfig from '../../config';
 import { AuthServices } from '../../services/auth';
 import asyncHandler from '../../utils/async_handle';
 import { UserInfo } from '../../submodule/models/user';
