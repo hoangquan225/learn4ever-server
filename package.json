@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/elearning-server/server.js",
-    "postinstall": "tsc",
+    "postinstall": "npm i typescript && tsc",
     "dev": "cross-env NODE_ENV=development ts-node-dev --respawn --pretty server.ts",
     "pull-submodule": "cd src/submodule && git pull origin master && npm i"
   },
