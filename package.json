@@ -7,7 +7,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "start": "node build/server.js",
+    "start": "node dist/elearning-server/server.js",
     "postinstall": "tsc",
     "dev": "cross-env NODE_ENV=development ts-node-dev --respawn --pretty server.ts",
     "pull-submodule": "cd src/submodule && git pull origin master && npm i"
