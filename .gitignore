@@ -9,6 +9,7 @@ server/public
 dist/
 Dockerfile
 .dockerignore
+yarn.lock
 
 # Compiled Java class files
 *.class
