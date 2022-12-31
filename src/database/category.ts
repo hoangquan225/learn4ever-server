@@ -13,6 +13,8 @@ const CategorySchema = new mongoose.Schema<CategoryDoc, ICategorySchema>(
     {
         name: String,
         status: Number,
+        avatar: String,
+        des: String,
         slug: String,
         createDate : { type: Number, default: Date.now() },
         updateDate : { type: Number, default: Date.now() },
