@@ -13,6 +13,16 @@ export default class CourseService {
             throw new BadRequestError();
         }
     }
+
+     // get by id category
+     getCoursesByIdCategory = async (body: {idCategory: any, status: number}) => {
+        try {
+            const courses = await CourseModel.find({idCategory: body.idCategory, status: body.status})
+            return courses
+        } catch (error) {
+            throw new BadRequestError();
+        }
+    }
     // update and create
     updateCourse = async (body: Course): Promise<{
         data: Course | string,
