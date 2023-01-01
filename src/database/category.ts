@@ -16,6 +16,7 @@ const CategorySchema = new mongoose.Schema<CategoryDoc, ICategorySchema>(
         avatar: String,
         des: String,
         slug: String,
+        index: Number,
         createDate : { type: Number, default: Date.now() },
         updateDate : { type: Number, default: Date.now() },
     },
