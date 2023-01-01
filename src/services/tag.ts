@@ -1,37 +1,27 @@
 import { BadRequestError } from "../common/errors";
-import { CourseModel } from "../database/course";
+import { TagModel } from "../database/tag";
 import TTCSconfig from "../submodule/common/config";
-import { Course } from "../submodule/models/course";
+import { Tag } from "../submodule/models/tag"
 
-export default class CourseService {
+export default class TagService {
     // get 
-    getCoursesByStatus = async (body: {status: number}): Promise<Course[]> => {
+    getTagsByStatus = async (body: {status: number}): Promise<Tag[]> => {
         try {
-            const courses = await CourseModel.find({status: body.status})
-            return courses
-        } catch (error) {
-            throw new BadRequestError();
-        }
-    }
-
-     // get by id category
-     getCoursesByIdCategory = async (body: {idCategory: any, status: number}) => {
-        try {
-            const courses = await CourseModel.find({idCategory: body.idCategory, status: body.status})
-            return courses
+            const tags = await TagModel.find({status: body.status})
+            return tags
         } catch (error) {
             throw new BadRequestError();
         }
     }
     // update and create
-    updateCourse = async (body: Course): Promise<{
-        data: Course | string,
+    updateTag = async (body: Tag): Promise<{
+        data: Tag | string,
         status: number 
     }> => {
         if (body?.id) {
             // update
             try {
-                const courses = await CourseModel.findOneAndUpdate(
+                const tags = await TagModel.findOneAndUpdate(
                     { _id: body?.id },
                     {
                         $set: {
@@ -41,9 +31,9 @@ export default class CourseService {
                     },
                     { new: true }
                 );
-                if(courses) {
+                if(tags) {
                     return {
-                        data: courses, 
+                        data: tags, 
                         status: TTCSconfig.STATUS_SUCCESS
                     }
                 } else {
@@ -58,13 +48,13 @@ export default class CourseService {
         } else {
             // create
             try {
-                const newCourse = await CourseModel.create({
+                const newUser = await TagModel.create({
                     ...body,
                     createDate: Date.now(),
                     updateDate: Date.now(),
                 })
                 return {
-                    data: newCourse, 
+                    data: newUser, 
                     status: TTCSconfig.STATUS_SUCCESS
                 }
             } catch (error) {
