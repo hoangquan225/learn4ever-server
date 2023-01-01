@@ -14,7 +14,7 @@ export default class CourseService {
         }
     }
 
-     // get by id category
+    // get by id category
      getCoursesByIdCategory = async (body: {idCategory: any, status: number}) => {
         try {
             const courses = await CourseModel.find({idCategory: body.idCategory, status: body.status})
@@ -23,6 +23,25 @@ export default class CourseService {
             throw new BadRequestError();
         }
     }
+     
+    // get by id tag or category
+    getByIdTagAndCategory = async (body: {idCategory: any, idTag: any, status: number}) => {
+        try {
+            if(body.idTag && body.idCategory) {
+                const courses = await CourseModel.find({idTag: body.idTag, idCategory: body.idCategory, status: body.status})
+                return courses
+            }else if(body.idCategory) {
+                const courses = await CourseModel.find({idCategory: body.idCategory, status: body.status})
+                return courses
+            }else {
+                const courses = await CourseModel.find({idTag: body.idTag, status: body.status})
+                return courses
+            }
+        } catch (error) {
+            throw new BadRequestError();
+        }
+    }
+
     // update and create
     updateCourse = async (body: Course): Promise<{
         data: Course | string,
