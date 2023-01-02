@@ -15,6 +15,14 @@ tagRouter.post(Endpoint.GET_TAGS_BY_STATUS, asyncHandler(async (req, res) => {
     })
 }))
 
+tagRouter.post(Endpoint.GET_TAGS_BY_ID_CATEGORY, asyncHandler(async (req, res) => {
+    const data = await tagService.getByIdCategory({idCategory: req.query.idCategory, status : Number(req.query.status)})
+    return res.json({
+        data,
+        status : TTCSconfig.STATUS_SUCCESS
+    })
+}))
+
 tagRouter.post(Endpoint.UPDATE_TAG, asyncHandler(async (req, res) => {
     const data = await tagService.updateTag(req.body)
     return res.json(data)

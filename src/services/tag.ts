@@ -13,6 +13,20 @@ export default class TagService {
             throw new BadRequestError();
         }
     }
+
+    // get 
+    getByIdCategory = async (body: {idCategory: any, status: number}) => {
+        try {
+            console.log(typeof body.idCategory);
+            
+            const courses = await TagModel.find({idCategory: {$all: body.idCategory}, status: body.status})
+            // const courses = await TagModel.find({idCategory: body.idCategory, status: body.status})
+            return courses
+        } catch (error) {
+            throw new BadRequestError();
+        }
+    }
+
     // update and create
     updateTag = async (body: Tag): Promise<{
         data: Tag | string,
