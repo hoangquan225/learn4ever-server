@@ -7,10 +7,10 @@
   },
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node build/elearning-server/server.js",
-    "postinstall": "rimraf build && tsc",
+    "start": "cross-env NODE_ENV=production node dist/server.js",
+    "postinstall": "rimraf dist && tsc",
     "ts.check": "tsc --project tsconfig.json",
-    "add-build": "git add build",
+    "add-build": "git add dist",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "cross-env NODE_ENV=development ts-node-dev --respawn --pretty server.ts",
     "pull-submodule": "cd src/submodule && git pull origin master && npm i",
