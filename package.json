@@ -7,7 +7,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node dist/server.js",
+    "start": "node dist/server.js",
     "postinstall": "rimraf dist && tsc",
     "ts.check": "tsc --project tsconfig.json",
     "add-build": "git add dist",
