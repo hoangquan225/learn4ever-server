@@ -8,10 +8,19 @@
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production node build/elearning-server/server.js",
-    "postinstall": "tsc",
+    "postinstall": "rimraf build && tsc",
+    "ts.check": "tsc --project tsconfig.json",
+    "add-build": "git add build",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "cross-env NODE_ENV=development ts-node-dev --respawn --pretty server.ts",
-    "pull-submodule": "cd src/submodule && git pull origin master && npm i"
+    "pull-submodule": "cd src/submodule && git pull origin master && npm i",
+    "deploy": "vercel deploy --prod"
   },
+  "pre-commit": [
+    "ts.check",
+    "build",
+    "add-build"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -42,6 +51,8 @@
     "eslint": "^8.27.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0",
+    "pre-commit": "^1.2.2",
+    "rimraf": "^3.0.2",
     "run-script-os": "^1.1.6",
     "ts-node-dev": "^2.0.0",
     "tslint": "^6.1.3",
