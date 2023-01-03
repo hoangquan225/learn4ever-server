@@ -4,13 +4,13 @@
       {
           "src": "build/elearning-server/index.js",
           "use": "@vercel/node",
-          "config": { "includeFiles": ["dist/**"] }
+          "config": { "includeFiles": ["build/**"] }
       }
   ],
   "routes": [
       {
           "src": "/(.*)",
-          "dest": "build/elearning-server/index.js"
+          "build": "build/elearning-server/index.js"
       }
   ]
 }

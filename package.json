@@ -16,11 +16,6 @@
     "pull-submodule": "cd src/submodule && git pull origin master && npm i",
     "deploy": "vercel deploy --prod"
   },
-  "pre-commit": [
-    "ts.check",
-    "build",
-    "add-build"
-  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -51,7 +46,6 @@
     "eslint": "^8.27.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0",
-    "pre-commit": "^1.2.2",
     "rimraf": "^3.0.2",
     "run-script-os": "^1.1.6",
     "ts-node-dev": "^2.0.0",
