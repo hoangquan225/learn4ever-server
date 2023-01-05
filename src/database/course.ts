@@ -17,6 +17,7 @@ const CourseSchema = new mongoose.Schema<CourseDoc, ICourseSchema>(
         status: Number,
         des: String,
         slug: String,
+        avatar: String,
         idCategory: {
             type: mongoose.Types.ObjectId, 
             ref: categoryTable

@@ -9,14 +9,20 @@ const categoryService = new CategoryService();
 
 categoryRouter.post(Endpoint.GET_CATEGORYS_BY_STATUS, asyncHandler(async (req, res) => {
     const data = await categoryService.getCategorysByStatus({status : Number(req.query.status)})
+    
     return res.json({
         data,
-        status : TTCSconfig.STATUS_SUCCESS
+        status: TTCSconfig.STATUS_SUCCESS
     })
 }))
 
 categoryRouter.post(Endpoint.UPDATE_CATEGORY, asyncHandler(async (req, res) => {
     const data = await categoryService.updateCategory(req.body)
+    return res.json(data)
+}))
+
+categoryRouter.post(Endpoint.ORDER_CATEGORY, asyncHandler(async (req, res) => {
+    const data = await categoryService.orderCategory(req.body)
     return res.json(data)
 }))
 

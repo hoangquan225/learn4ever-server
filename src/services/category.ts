@@ -5,9 +5,9 @@ import { Category } from "../submodule/models/category"
 
 export default class CategoryService {
     // get 
-    getCategorysByStatus = async (body: {status: number}): Promise<Category[]> => {
+    getCategorysByStatus = async (body: { status: number }): Promise<Category[]> => {
         try {
-            const categorys = await CategoryModel.find({status: body.status})
+            const categorys = await CategoryModel.find({ status: body.status })
             return categorys
         } catch (error) {
             throw new BadRequestError();
@@ -16,7 +16,7 @@ export default class CategoryService {
     // update and create
     updateCategory = async (body: Category): Promise<{
         data: Category | string,
-        status: number 
+        status: number
     }> => {
         if (body?.id) {
             // update
@@ -31,14 +31,14 @@ export default class CategoryService {
                     },
                     { new: true }
                 );
-                if(categorys) {
+                if (categorys) {
                     return {
-                        data: categorys, 
+                        data: categorys,
                         status: TTCSconfig.STATUS_SUCCESS
                     }
                 } else {
                     return {
-                        data: 'không tồn tại' , 
+                        data: 'không tồn tại',
                         status: TTCSconfig.STATUS_NO_EXIST
                     }
                 }
@@ -54,12 +54,66 @@ export default class CategoryService {
                     updateDate: Date.now(),
                 })
                 return {
-                    data: newUser, 
+                    data: newUser,
                     status: TTCSconfig.STATUS_SUCCESS
                 }
             } catch (error) {
                 throw new BadRequestError();
             }
         }
+    }
+
+    orderCategory = async (payload: {
+        indexRange: Array<{
+            id: string,
+            index: number
+        }>,
+        status: number
+    }): Promise<{
+        status: number,
+        data: any
+    }> => {
+        try {
+            const loadCategory = await CategoryModel.find({ status: payload.status })
+
+            const categorys = payload.indexRange.map(o => {
+                const data = loadCategory.map(o => new Category(o)).find(category => category.id == o.id)
+                if (!data) {
+                    throw new BadRequestError()
+                }
+                return data
+            })
+
+            const newCategorys = categorys.map(category => {
+                const indexNew = payload.indexRange.find(o => o.id == category?.id)?.index
+                return {
+                    ...category,
+                    index: indexNew
+                }
+            })
+
+            const data = await Promise.all(newCategorys.map((category) => {
+                return CategoryModel.findOneAndUpdate(
+                    { _id: category?.id },
+                    {
+                        $set: {
+                            ...category,
+                            updateDate: Date.now()
+                        }
+                    },
+                    { new: true }
+                )
+            }))
+            return {
+                status: TTCSconfig.STATUS_SUCCESS,
+                data
+            }
+        } catch (error) {
+            return {
+                status: TTCSconfig.STATUS_FAIL,
+                data: []
+            }
+        }
+
     }
 }
