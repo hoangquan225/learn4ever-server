@@ -32,7 +32,9 @@ courseRouter.post(Endpoint.GET_COURSES_BY_ID_TAG_AND_CATEGORY, asyncHandler(asyn
 }))
 
 courseRouter.post(Endpoint.GET_COURSE_BY_SLUG, asyncHandler(async (req, res) => {
-    const data = await courseService.getCoursesBySlug(req.body)
+    const data = await courseService.getCoursesBySlug({
+        slug: `${req.query.slug || ''}`
+    })
     return res.json({
         data, 
         status : TTCSconfig.STATUS_SUCCESS
