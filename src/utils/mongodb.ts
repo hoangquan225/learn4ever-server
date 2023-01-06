@@ -7,9 +7,9 @@ dotenv.config();
 const {
     DB_HOST = '127.0.0.1',
     DB_PORT = '27017',
-    DB_USER = '',
-    DB_PWD = '',
-    DB_NAME
+    DB_USER = 'duyhung',
+    DB_PWD = 'hung6789',
+    DB_NAME = 'my_db'
 } = process.env;
 
 const DB_URL = `mongodb+srv://duyhung:${DB_PWD}@${DB_USER}.eyz9i9y.mongodb.net/?retryWrites=true&w=majority`;
