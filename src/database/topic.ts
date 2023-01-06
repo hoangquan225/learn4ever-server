@@ -22,6 +22,8 @@ const TopicSchema = new mongoose.Schema<TopicDoc, ITopicSchema>(
             type: mongoose.Types.ObjectId, 
             ref: topicTable
         },
+        type: Number,
+        des: String,
         createDate: {type: Number, default: Date.now()},
         updateDate: {type: Number, default: Date.now()},
     },
