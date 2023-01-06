@@ -42,6 +42,17 @@ export default class CourseService {
         }
     }
 
+    getCoursesBySlug = async (body: {slug: string}) => {
+        try {
+            const course = await CourseModel.find({
+                slug: body.slug
+            })
+            return course
+        } catch (error) {
+            throw new BadRequestError();
+        }
+    }
+
     // update and create
     updateCourse = async (body: Course): Promise<{
         data: Course | string,

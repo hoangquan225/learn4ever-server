@@ -1,5 +1,6 @@
 import { BadRequestError } from "../common/errors";
 import { CategoryModel } from "../database/category";
+import { CourseModel } from "../database/course";
 import TTCSconfig from "../submodule/common/config";
 import { Category } from "../submodule/models/category"
 
@@ -9,6 +10,19 @@ export default class CategoryService {
         try {
             const categorys = await CategoryModel.find({ status: body.status })
             return categorys
+        } catch (error) {
+            throw new BadRequestError();
+        }
+    }
+
+    getCategorysBySlug = async (body: { slug: string }) => {
+        try {
+            const categorys = await CategoryModel.findOne({ slug: body.slug })
+            const course = await CourseModel.find({ idCategory: categorys?.id })
+            return {
+                categorys,
+                course
+            }
         } catch (error) {
             throw new BadRequestError();
         }

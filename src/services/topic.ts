@@ -13,29 +13,25 @@ export default class TopicService {
             throw new BadRequestError();
         }
     }
-    // get by id category
-    getTopicsByIdCourse = async (body: {idCourse: any, type: number}):Promise<Topic[]> => {
+
+    getTopicsByCourse = async (body: {
+        idCourse: string,
+        type: number,
+        parentId: string | null
+    }) => {
         try {
-            const topics = await TopicModel.find({idCourse: body.idCourse, type: body.type, parentId: null})
-            return topics
-        } catch (error) {   
-            throw new BadRequestError();
-        }
-    }
-    // get by id category
-    getTopicsByParentId = async (body: {parentId: any})  => {
-        try {
-            const topics = await TopicModel.find({parentId: body.parentId})
-            return topics
-        } catch (error) {   
+            const data = await TopicModel.find({
+                idCourse: body.idCourse,
+                parentId: body.parentId,
+                type: body.type,
+            })
+            return data
+        } catch (error) {
             throw new BadRequestError();
         }
     }
     // update and create
-    updateTopic = async (body: Topic): Promise<{
-        data: Topic | string,
-        status: number 
-    }> => {
+    updateTopic = async (body: Topic) => {
         if (body?.id) {
             // update
             try {
