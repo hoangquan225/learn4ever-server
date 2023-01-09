@@ -3,6 +3,7 @@ import CourseService from '../services/course';
 import asyncHandler from '../utils/async_handle';
 import Endpoint from '../submodule/common/endpoint';
 import TTCSconfig from '../submodule/common/config'
+import { Course } from '../submodule/models/course';
 
 const courseRouter = express.Router();
 const courseService = new CourseService();
@@ -40,7 +41,7 @@ courseRouter.post(Endpoint.GET_COURSE_BY_SLUG, asyncHandler(async (req, res) => 
 }))
 
 courseRouter.post(Endpoint.UPDATE_COURSE, asyncHandler(async (req, res) => {
-    const data = await courseService.updateCourse(req.body)
+    const data = await courseService.updateCourse(new Course(req.body))
     return res.json(data)
 }))
 

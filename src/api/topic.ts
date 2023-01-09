@@ -9,10 +9,10 @@ const topicRouter = express.Router();
 const topicService = new TopicService();
 
 topicRouter.post(Endpoint.GET_TOPICS_BY_STATUS, asyncHandler(async (req, res) => {
-    const data = await topicService.getTopicsByStatus({status : Number(req.query.status)})
+    const data = await topicService.getTopicsByStatus({ status: Number(req.query.status) })
     return res.json({
         data,
-        status : TTCSconfig.STATUS_SUCCESS
+        status: TTCSconfig.STATUS_SUCCESS
     })
 }))
 
@@ -28,9 +28,14 @@ topicRouter.post(Endpoint.GET_TOPIC_BY_COURSE, asyncHandler(async (req, res) => 
         parentId: req.query.parentId ? `${req.query.parentId}` : null
     })
     return res.json({
-        data, 
+        data,
         status: TTCSconfig.STATUS_SUCCESS
     })
+}))
+
+topicRouter.post(Endpoint.ORDER_TOPIC, asyncHandler(async (req, res) => {
+    const data = await topicService.orderTopic(req.body)
+    return res.json(data)
 }))
 
 export { topicRouter };

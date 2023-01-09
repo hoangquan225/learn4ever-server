@@ -3,6 +3,7 @@ import TagService from '../services/tag';
 import asyncHandler from '../utils/async_handle';
 import Endpoint from '../submodule/common/endpoint';
 import TTCSconfig from '../submodule/common/config'
+import { Tag } from '../submodule/models/tag';
 
 const tagRouter = express.Router();
 const tagService = new TagService();
@@ -24,7 +25,7 @@ tagRouter.post(Endpoint.GET_TAGS_BY_ID_CATEGORY, asyncHandler(async (req, res) =
 }))
 
 tagRouter.post(Endpoint.UPDATE_TAG, asyncHandler(async (req, res) => {
-    const data = await tagService.updateTag(req.body)
+    const data = await tagService.updateTag(new Tag(req.body))
     return res.json(data)
 }))
 

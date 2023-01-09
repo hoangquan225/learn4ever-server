@@ -5,9 +5,9 @@ import { Topic } from "../submodule/models/topic"
 
 export default class TopicService {
     // get 
-    getTopicsByStatus = async (body: {status: number}): Promise<Topic[]> => {
+    getTopicsByStatus = async (body: { status: number }): Promise<Topic[]> => {
         try {
-            const topics = await TopicModel.find({status: body.status})
+            const topics = await TopicModel.find({ status: body.status })
             return topics
         } catch (error) {
             throw new BadRequestError();
@@ -45,14 +45,14 @@ export default class TopicService {
                     },
                     { new: true }
                 );
-                if(topics) {
+                if (topics) {
                     return {
-                        data: topics, 
+                        data: topics,
                         status: TTCSconfig.STATUS_SUCCESS
                     }
                 } else {
                     return {
-                        data: 'không tồn tại' , 
+                        data: 'không tồn tại',
                         status: TTCSconfig.STATUS_NO_EXIST
                     }
                 }
@@ -68,12 +68,50 @@ export default class TopicService {
                     updateDate: Date.now(),
                 })
                 return {
-                    data: newUser, 
+                    data: newUser,
                     status: TTCSconfig.STATUS_SUCCESS
                 }
             } catch (error) {
                 throw new BadRequestError();
             }
+        }
+    }
+
+    orderTopic = async (body: {
+        indexRange: Array<{
+            id: string,
+            index: number
+        }>
+    }) => {
+        try {
+            const idRange = body.indexRange.map(o => o.id)
+            const loadTopic = await TopicModel.find({ "_id": idRange })
+
+            const orderTopic = loadTopic.map(topic => new Topic(topic)).map(topic => {
+                return {
+                    ...topic,
+                    index: body?.indexRange?.find(o => o.id === topic.id?.toString())?.index || 0
+                }
+            })
+
+            const data = await Promise.all(orderTopic.map(order => {
+                return TopicModel.findOneAndUpdate(
+                    { _id: order?.id },
+                    {
+                        $set: {
+                            ...order,
+                            updateDate: Date.now()
+                        }
+                    },
+                    { new: true }
+                )
+            }))
+
+            return {
+                status: TTCSconfig.STATUS_SUCCESS
+            }
+        } catch (error) {
+            throw new BadRequestError();
         }
     }
 }

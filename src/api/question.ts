@@ -3,6 +3,7 @@ import QuestionService from '../services/question';
 import asyncHandler from '../utils/async_handle';
 import Endpoint from '../submodule/common/endpoint';
 import TTCSconfig from '../submodule/common/config'
+import { Question } from '../submodule/models/question';
 
 const questionRouter = express.Router();
 const questionService = new QuestionService();
@@ -16,7 +17,12 @@ questionRouter.post(Endpoint.GET_QUESTIONS_BY_STATUS, asyncHandler(async (req, r
 }))
 
 questionRouter.post(Endpoint.UPDATE_QUESTION, asyncHandler(async (req, res) => {
-    const data = await questionService.updateQuestion(req.body)
+    const data = await questionService.updateQuestion(new Question(req.body))
+    return res.json(data)
+}))
+
+questionRouter.post(Endpoint.ORDER_QUESTION, asyncHandler(async (req, res) => {
+    const data = await questionService.orderQuestion(req.body)
     return res.json(data)
 }))
 

@@ -5,10 +5,10 @@ import { Question } from "../submodule/models/question"
 
 export default class QuestionService {
     // get 
-    getQuestionsByStatus = async (body: {status: number}): Promise<Question[]> => {
+    getQuestionsByStatus = async (body: { status: number }): Promise<Question[]> => {
         try {
-            const questions = await QuestionModel.find({status: body.status})
-            return questions
+            const questions = await QuestionModel.find({ status: body.status })
+            return questions.map(o => new Question(o))
         } catch (error) {
             throw new BadRequestError();
         }
@@ -16,7 +16,7 @@ export default class QuestionService {
     // update and create
     updateQuestion = async (body: Question): Promise<{
         data: Question | string,
-        status: number 
+        status: number
     }> => {
         if (body?.id) {
             // update
@@ -31,14 +31,14 @@ export default class QuestionService {
                     },
                     { new: true }
                 );
-                if(questions) {
+                if (questions) {
                     return {
-                        data: questions, 
+                        data: questions,
                         status: TTCSconfig.STATUS_SUCCESS
                     }
                 } else {
                     return {
-                        data: 'không tồn tại' , 
+                        data: 'không tồn tại',
                         status: TTCSconfig.STATUS_NO_EXIST
                     }
                 }
@@ -54,12 +54,55 @@ export default class QuestionService {
                     updateDate: Date.now(),
                 })
                 return {
-                    data: newUser, 
+                    data: newUser,
                     status: TTCSconfig.STATUS_SUCCESS
                 }
             } catch (error) {
                 throw new BadRequestError();
             }
+        }
+    }
+
+    orderQuestion = async (body: {
+        indexRange: Array<{
+            id: string,
+            index: number
+        }>
+    }) => {
+        try {
+            const { indexRange } = body
+            const idRange = indexRange.map(o => o.id)
+
+            const loadQuestion = await QuestionModel.find({ "_id": idRange })
+
+            const orderQuestion = loadQuestion.map(question => new Question(question)).map(question => {
+                return {
+                    ...question,
+                    index: body?.indexRange?.find(o => o.id === question.id?.toString())?.index || 0
+                }
+            })
+
+            const data = await Promise.all(orderQuestion.map(order => {
+                console.log(order);
+                
+
+                return QuestionModel.findOneAndUpdate(
+                    { _id: order?.id },
+                    {
+                        $set: {
+                            ...order,
+                            updateDate: Date.now()
+                        }
+                    },
+                    { new: true }
+                )
+            }))
+
+            return {
+                status: TTCSconfig.STATUS_SUCCESS
+            }
+        } catch (error) {
+            throw new BadRequestError('khong ton tai')
         }
     }
 }
