@@ -24,6 +24,7 @@ const TopicSchema = new mongoose.Schema<TopicDoc, ITopicSchema>(
         },
         type: Number,
         des: String,
+        index : Number,
         createDate: {type: Number, default: Date.now()},
         updateDate: {type: Number, default: Date.now()},
     },

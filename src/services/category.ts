@@ -123,10 +123,7 @@ export default class CategoryService {
                 data
             }
         } catch (error) {
-            return {
-                status: TTCSconfig.STATUS_FAIL,
-                data: []
-            }
+            throw new BadRequestError();
         }
 
     }

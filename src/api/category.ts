@@ -3,6 +3,7 @@ import CategoryService from '../services/category';
 import asyncHandler from '../utils/async_handle';
 import Endpoint from '../submodule/common/endpoint';
 import TTCSconfig from '../submodule/common/config'
+import { Category } from '../submodule/models/category';
 
 const categoryRouter = express.Router();
 const categoryService = new CategoryService();
@@ -26,7 +27,7 @@ categoryRouter.post(Endpoint.GET_CATEGORYS_BY_SLUG, asyncHandler(async (req, res
 }))
 
 categoryRouter.post(Endpoint.UPDATE_CATEGORY, asyncHandler(async (req, res) => {
-    const data = await categoryService.updateCategory(req.body)
+    const data = await categoryService.updateCategory(new Category(req.body))
     return res.json(data)
 }))
 
