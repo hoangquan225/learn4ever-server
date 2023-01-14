@@ -17,11 +17,9 @@ export default class TagService {
     // get 
     getByIdCategory = async (body: {idCategory: any, status: number}) => {
         try {
-            console.log(typeof body.idCategory);
-            
-            const courses = await TagModel.find({idCategory: {$all: body.idCategory}, status: body.status})
-            // const courses = await TagModel.find({idCategory: body.idCategory, status: body.status})
-            return courses
+            const tags = await TagModel.find({idCategory: {$all: body.idCategory}, status: body.status})
+            // const tags = await TagModel.find({idCategory: body.idCategory, status: body.status})
+            return tags
         } catch (error) {
             throw new BadRequestError();
         }

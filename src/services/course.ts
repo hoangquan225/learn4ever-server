@@ -44,9 +44,10 @@ export default class CourseService {
 
     getCoursesBySlug = async (body: {slug: string}) => {
         try {
-            const course = await CourseModel.find({
+            const course = await CourseModel.findOne({
                 slug: body.slug
             })
+            
             return course
         } catch (error) {
             throw new BadRequestError();
