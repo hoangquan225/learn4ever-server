@@ -25,7 +25,15 @@ export default class TopicService {
                 parentId: body.parentId,
                 type: body.type,
             }).populate('topicChild')
-            return data.map(o => new Topic(o))
+            let total = 0
+            data.forEach(o => {
+                total += o.topicChild.length
+            })
+            return {
+                data : data.map(o => new Topic(o)),
+                total,
+                status: TTCSconfig.STATUS_SUCCESS
+            }
         } catch (error) {
             throw new BadRequestError();
         }

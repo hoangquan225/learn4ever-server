@@ -16,6 +16,17 @@ lessonRouter.post(Endpoint.GET_LESSONS_BY_STATUS, asyncHandler(async (req, res) 
     })
 }))
 
+lessonRouter.post(Endpoint.GET_LESSONS_BY_COURSE, asyncHandler(async (req, res) => {
+    const data = await lessonService.getLessonByIdCourse({
+        status : Number(req.query.status), 
+        idTopic: `${req.query.idTopic}`
+    })
+    return res.json({
+        data,
+        status : TTCSconfig.STATUS_SUCCESS
+    })
+}))
+
 lessonRouter.post(Endpoint.UPDATE_LESSON, asyncHandler(async (req, res) => {
     const data = await lessonService.updateLesson(new Lesson(req.body))
     return res.json(data)
