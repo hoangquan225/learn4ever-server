@@ -42,13 +42,19 @@ export default class CourseService {
         }
     }
 
-    getCoursesBySlug = async (body: {slug: string}) => {
+    getCoursesBySlug = async (body: {slug: string, status?:number}) => {
+        const {slug, status = TTCSconfig.STATUS_PUBLIC} = body
         try {
+            let statusRes = TTCSconfig.STATUS_SUCCESS
             const course = await CourseModel.findOne({
-                slug: body.slug
+                slug, 
+                status
             })
-            
-            return course
+            if(!course) statusRes = TTCSconfig.RESPONSIVE_NULL
+            return {
+                data: course, 
+                status : statusRes
+            }
         } catch (error) {
             throw new BadRequestError();
         }

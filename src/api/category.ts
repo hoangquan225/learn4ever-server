@@ -20,10 +20,7 @@ categoryRouter.post(Endpoint.GET_CATEGORYS_BY_STATUS, asyncHandler(async (req, r
 categoryRouter.post(Endpoint.GET_CATEGORYS_BY_SLUG, asyncHandler(async (req, res) => {
     const data = await categoryService.getCategorysBySlug({slug : `${req.query.slug}`})
     
-    return res.json({
-        data,
-        status: TTCSconfig.STATUS_SUCCESS
-    })
+    return res.json(data)
 }))
 
 categoryRouter.post(Endpoint.UPDATE_CATEGORY, asyncHandler(async (req, res) => {

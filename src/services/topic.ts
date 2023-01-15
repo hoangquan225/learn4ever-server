@@ -14,7 +14,7 @@ export default class TopicService {
         }
     }
     // get by id category
-    getTopicsByIdCourse = async (body: {idCourse: any, type: number}):Promise<Topic[]> => {
+    getTopicsByIdCourse = async (body: {idCourse: string, type: number}):Promise<Topic[]> => {
         try {
             const topics = await TopicModel.find({idCourse: body.idCourse, type: body.type, parentId: null})
             return topics
@@ -23,7 +23,7 @@ export default class TopicService {
         }
     }
     // get by id category
-    getTopicsByParentId = async (body: {parentId: any})  => {
+    getTopicsByParentId = async (body: {parentId: string})  => {
         try {
             const topics = await TopicModel.find({parentId: body.parentId})
             return topics
