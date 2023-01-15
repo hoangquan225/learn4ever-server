@@ -13,6 +13,22 @@ export default class LessonService {
             throw new BadRequestError();
         }
     }
+
+    getLessonByIdCourse = async (body: {
+        status: number, 
+        idTopic: string
+    })=> {
+        try {
+            const lessons = await LessonModel.findOne({
+                status: body.status, 
+                idTopic: body.idTopic
+            })
+            return new Lesson(lessons)
+        } catch (error) {
+            throw new BadRequestError();
+        }
+    }
+
     // update and create
     updateLesson = async (body: Lesson): Promise<{
         data: Lesson | string,

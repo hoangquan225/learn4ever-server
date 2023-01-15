@@ -16,6 +16,18 @@ questionRouter.post(Endpoint.GET_QUESTIONS_BY_STATUS, asyncHandler(async (req, r
     })
 }))
 
+questionRouter.post(Endpoint.GET_QUESTIONS_BY_TOPIC, asyncHandler(async (req, res) => {
+    const data = await questionService.getQuestionsByTopic({
+        status : Number(req.query.status),
+        idTopic: `${req.query.idTopic}`
+    })
+    return res.json({
+        data,
+        total: data.length,
+        status : TTCSconfig.STATUS_SUCCESS
+    })
+}))
+
 questionRouter.post(Endpoint.UPDATE_QUESTION, asyncHandler(async (req, res) => {
     const data = await questionService.updateQuestion(new Question(req.body))
     return res.json(data)

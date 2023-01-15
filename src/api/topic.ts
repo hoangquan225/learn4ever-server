@@ -27,10 +27,7 @@ topicRouter.post(Endpoint.GET_TOPIC_BY_COURSE, asyncHandler(async (req, res) => 
         type: Number(req.query.type),
         parentId: req.query.parentId ? `${req.query.parentId}` : null
     })
-    return res.json({
-        data,
-        status: TTCSconfig.STATUS_SUCCESS
-    })
+    return res.json(data)
 }))
 
 topicRouter.post(Endpoint.ORDER_TOPIC, asyncHandler(async (req, res) => {

@@ -13,6 +13,18 @@ export default class QuestionService {
             throw new BadRequestError();
         }
     }
+
+    getQuestionsByTopic = async (body: { status: number, idTopic: string }) => {
+        try {
+            const questions = await QuestionModel.find({
+                status: body.status, 
+                idTopic: body.idTopic
+            })
+            return questions.map(o => new Question(o))
+        } catch (error) {
+            throw new BadRequestError();
+        }
+    }
     // update and create
     updateQuestion = async (body: Question): Promise<{
         data: Question | string,

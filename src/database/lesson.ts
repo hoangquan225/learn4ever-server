@@ -17,7 +17,9 @@ const LessonSchema = new mongoose.Schema<LessonDoc, ILessonSchema>(
             type: mongoose.Types.ObjectId, 
             ref: topicTable
         },
-        file: String,
+        video: String,
+        des: String,
+        type: Number,
         createDate: {type: Number, default: Date.now()},
         updateDate: {type: Number, default: Date.now()},
     },
