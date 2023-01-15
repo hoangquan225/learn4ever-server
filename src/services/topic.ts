@@ -7,27 +7,9 @@ export default class TopicService {
     // get 
     getTopicsByStatus = async (body: { status: number }): Promise<Topic[]> => {
         try {
-            const topics = await TopicModel.find({ status: body.status })
-            return topics
+            const topics = await TopicModel.find({ status: body.status }).populate('topicChild')
+            return topics.map(topic => new Topic(topic))
         } catch (error) {
-            throw new BadRequestError();
-        }
-    }
-    // get by id category
-    getTopicsByIdCourse = async (body: {idCourse: string, type: number}):Promise<Topic[]> => {
-        try {
-            const topics = await TopicModel.find({idCourse: body.idCourse, type: body.type, parentId: null})
-            return topics
-        } catch (error) {   
-            throw new BadRequestError();
-        }
-    }
-    // get by id category
-    getTopicsByParentId = async (body: {parentId: string})  => {
-        try {
-            const topics = await TopicModel.find({parentId: body.parentId})
-            return topics
-        } catch (error) { 
             throw new BadRequestError();
         }
     }
@@ -42,8 +24,8 @@ export default class TopicService {
                 idCourse: body.idCourse,
                 parentId: body.parentId,
                 type: body.type,
-            })
-            return data
+            }).populate('topicChild')
+            return data.map(o => new Topic(o))
         } catch (error) {
             throw new BadRequestError();
         }
@@ -85,6 +67,25 @@ export default class TopicService {
                     createDate: Date.now(),
                     updateDate: Date.now(),
                 })
+                const parentId = newUser.parentId;
+                if (parentId) {
+                    const parent = await TopicModel.findOne({
+                        _id: parentId
+                    })
+                    // update parent 
+                    if (parent) {
+                        await TopicModel.findOneAndUpdate(
+                            { _id: parentId },
+                            {
+                                $set: {
+                                    ...parent,
+                                    topicChild: [...parent.topicChild, newUser?.id]
+                                }
+                            },
+                            { new: true }
+                        )
+                    }
+                }
                 return {
                     data: newUser,
                     status: TTCSconfig.STATUS_SUCCESS
