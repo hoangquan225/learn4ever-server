@@ -17,11 +17,16 @@ export default class CategoryService {
 
     getCategorysBySlug = async (body: { slug: string }) => {
         try {
+            let status = TTCSconfig.STATUS_SUCCESS
             const categorys = await CategoryModel.findOne({ slug: body.slug })
             const course = await CourseModel.find({ idCategory: categorys?.id })
+            categorys ? status = TTCSconfig.STATUS_SUCCESS : status = TTCSconfig.RESPONSIVE_NULL
             return {
-                categorys,
-                course
+                data : {
+                    categorys,
+                    course
+                },
+                status
             }
         } catch (error) {
             throw new BadRequestError();

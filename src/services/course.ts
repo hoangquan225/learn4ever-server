@@ -14,18 +14,8 @@ export default class CourseService {
         }
     }
 
-    // get by id category
-     getCoursesByIdCategory = async (body: {idCategory: any, status: number}) => {
-        try {
-            const courses = await CourseModel.find({idCategory: body.idCategory, status: body.status})
-            return courses
-        } catch (error) {
-            throw new BadRequestError();
-        }
-    }
-     
     // get by id tag or category
-    getByIdTagAndCategory = async (body: {idCategory: any, idTag: any, status: number}) => {
+    getByIdTagAndCategory = async (body: {idCategory: any, idTag: any, status: number}): Promise<Course[]> => {
         try {
             if(body.idTag && body.idCategory) {
                 const courses = await CourseModel.find({idTag: body.idTag, idCategory: body.idCategory, status: body.status})
@@ -42,12 +32,19 @@ export default class CourseService {
         }
     }
 
-    getCoursesBySlug = async (body: {slug: string}) => {
+    getCoursesBySlug = async (body: {slug: string, status?:number}) => {
+        const {slug, status = TTCSconfig.STATUS_PUBLIC} = body
         try {
-            const course = await CourseModel.find({
-                slug: body.slug
-            })
-            return course
+            let statusRes = TTCSconfig.STATUS_SUCCESS
+            const course = await CourseModel.findOne({
+                slug, 
+                status
+            }).populate('idCategory')
+            if(!course) statusRes = TTCSconfig.RESPONSIVE_NULL
+            return {
+                data: new Course(course), 
+                status : statusRes
+            }
         } catch (error) {
             throw new BadRequestError();
         }

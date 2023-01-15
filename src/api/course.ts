@@ -16,14 +16,6 @@ courseRouter.post(Endpoint.GET_COURSES_BY_STATUS, asyncHandler(async (req, res) 
     })
 }))
 
-courseRouter.post(Endpoint.GET_COURSES_BY_ID_CATEGORY, asyncHandler(async (req, res) => {
-    const data = await courseService.getCoursesByIdCategory({idCategory: req.query.idCategory, status : Number(req.query.status)})
-    return res.json({
-        data,
-        status : TTCSconfig.STATUS_SUCCESS
-    })
-}))
-
 courseRouter.post(Endpoint.GET_COURSES_BY_ID_TAG_AND_CATEGORY, asyncHandler(async (req, res) => {
     const data = await courseService.getByIdTagAndCategory({idCategory: req.query.idCategory, idTag: req.query.idTag, status : Number(req.query.status)})
     return res.json({
@@ -34,12 +26,10 @@ courseRouter.post(Endpoint.GET_COURSES_BY_ID_TAG_AND_CATEGORY, asyncHandler(asyn
 
 courseRouter.post(Endpoint.GET_COURSE_BY_SLUG, asyncHandler(async (req, res) => {
     const data = await courseService.getCoursesBySlug({
-        slug: `${req.query.slug || ''}`
+        slug: `${req.query.slug || ''}`, 
+        status: Number(req.query.status)
     })
-    return res.json({
-        data, 
-        status : TTCSconfig.STATUS_SUCCESS
-    })
+    return res.json(data)
 }))
 
 courseRouter.post(Endpoint.UPDATE_COURSE, asyncHandler(async (req, res) => {
