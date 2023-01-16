@@ -121,7 +121,7 @@ export default class TopicService {
                     }
                 }
                 return {
-                    data: newUser,
+                    data: new Topic(newUser),
                     status: TTCSconfig.STATUS_SUCCESS
                 }
             } catch (error) {
