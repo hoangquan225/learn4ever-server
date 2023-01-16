@@ -29,8 +29,10 @@ export default class TopicService {
             data.forEach(o => {
                 total += o.topicChild.length
             })
+            console.log(data[0]);
+
             return {
-                data : data.map(o => new Topic(o)),
+                data: data.map(o => new Topic(o)),
                 total,
                 status: TTCSconfig.STATUS_SUCCESS
             }
@@ -54,8 +56,31 @@ export default class TopicService {
                     { new: true }
                 );
                 if (topics) {
+                    const topic = new Topic(topics)
+                    // get Topic parent
+                    const parentId = topic?.parentId
+                    const parent = await TopicModel.findOne({
+                        _id: parentId
+                    })
+                    if (parent) {
+                        // update topic child
+                        const parentTopic = new Topic(parent)
+                        if (!parentTopic?.topicChild.find(o => o.toString() == topic?.id?.toString())) {
+                            // nếu topic parent đã có topicChild này rồi thì ko cập nhật nữa
+                            await TopicModel.findOneAndUpdate(
+                                { _id: parentId },
+                                {
+                                    $set: {
+                                        ...parentTopic,
+                                        topicChild: [...parentTopic.topicChild, topic?.id]
+                                    }
+                                },
+                                { new: true }
+                            )
+                        }
+                    }
                     return {
-                        data: topics,
+                        data: topic,
                         status: TTCSconfig.STATUS_SUCCESS
                     }
                 } else {
@@ -82,12 +107,13 @@ export default class TopicService {
                     })
                     // update parent 
                     if (parent) {
+                        const parentTopic = new Topic(parent)
                         await TopicModel.findOneAndUpdate(
                             { _id: parentId },
                             {
                                 $set: {
-                                    ...parent,
-                                    topicChild: [...parent.topicChild, newUser?.id]
+                                    ...parentTopic,
+                                    topicChild: [...parentTopic.topicChild, newUser?.id]
                                 }
                             },
                             { new: true }
