@@ -15,7 +15,7 @@ export default class TagService {
     }
 
     // get 
-    getByIdCategory = async (body: {idCategory: any, status: number}) => {
+    getByIdCategory = async (body: {idCategory: string[], status: number}) => {
         try {
             const tags = await TagModel.find({idCategory: {$all: body.idCategory}, status: body.status})
             // const tags = await TagModel.find({idCategory: body.idCategory, status: body.status})

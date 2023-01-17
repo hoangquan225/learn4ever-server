@@ -29,7 +29,6 @@ export default class TopicService {
             data.forEach(o => {
                 total += o.topicChild.length
             })
-            console.log(data[0]);
 
             return {
                 data: data.map(o => new Topic(o)),

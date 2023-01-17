@@ -10,7 +10,6 @@ const userRouter = express.Router();
 const userService = new UserService();
 
 userRouter.post(Endpoint.UPDATE_USER, asyncHandler(async (req, res) => {
-    // const body = <UserInfo>req.body;
     const body: { token: string, userInfo: UserInfo } = req.body;
 
     if (!body.token ) {

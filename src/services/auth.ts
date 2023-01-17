@@ -43,11 +43,6 @@ class AuthServices {
             const password = userInfo.password;
             const checkUserAcc: UserInfo | null = await UserModel.findOne({ account });
             if (!checkUserAcc) {
-                // const encodePassWord = encrypt(password)
-                // console.log({encodePassWord});
-                // const decodePassWord = decrypt(encodePassWord);
-                // console.log({decodePassWord});
-
                 const passEncode = this.processPass({ account, password })
 
                 // luu vao db
