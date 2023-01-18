@@ -14,6 +14,15 @@ export default class TopicService {
         }
     }
 
+    getTopicById = async (body: { id: string }) => {
+        try {
+            const topic = await TopicModel.findOne({ _id: body.id })
+            return topic
+        } catch (error) {
+            throw new BadRequestError();
+        }
+    }
+
     getTopicsByCourse = async (body: {
         idCourse: string,
         type: number,

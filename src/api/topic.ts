@@ -16,6 +16,11 @@ topicRouter.post(Endpoint.GET_TOPICS_BY_STATUS, asyncHandler(async (req, res) =>
     })
 }))
 
+topicRouter.post(Endpoint.GET_TOPIC_BY_ID, asyncHandler(async (req, res) => {
+    const data = await topicService.getTopicById({ id: `${req.query.id}` })
+    return res.json(data)
+}))
+
 topicRouter.post(Endpoint.UPDATE_TOPIC, asyncHandler(async (req, res) => {
     const data = await topicService.updateTopic(new Topic(req.body))
     return res.json(data)
