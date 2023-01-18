@@ -5,25 +5,34 @@ import { Lesson } from "../submodule/models/lesson"
 
 export default class LessonService {
     // get 
-    getLessonsByStatus = async (body: {status: number}): Promise<Lesson[]> => {
+    getLessonsByStatus = async (body: { status: number }): Promise<Lesson[]> => {
         try {
-            const lessons = await LessonModel.find({status: body.status})
+            const lessons = await LessonModel.find({ status: body.status })
             return lessons
         } catch (error) {
             throw new BadRequestError();
         }
     }
 
-    getLessonByIdCourse = async (body: {
-        status: number, 
+    getLessonByIdTopic = async (body: {
+        status: number,
         idTopic: string
-    })=> {
+    }) => {
         try {
             const lessons = await LessonModel.findOne({
-                status: body.status, 
+                status: body.status,
                 idTopic: body.idTopic
             })
-            return new Lesson(lessons)
+            if (lessons) {
+                return {
+                    status: TTCSconfig.STATUS_SUCCESS,
+                    data: new Lesson(lessons)
+                }
+            } 
+            return {
+                data: null, 
+                status: TTCSconfig.STATUS_SUCCESS
+            }
         } catch (error) {
             throw new BadRequestError();
         }
@@ -32,7 +41,7 @@ export default class LessonService {
     // update and create
     updateLesson = async (body: Lesson): Promise<{
         data: Lesson | string,
-        status: number 
+        status: number
     }> => {
         if (body?.id) {
             // update
@@ -47,14 +56,14 @@ export default class LessonService {
                     },
                     { new: true }
                 );
-                if(lessons) {
+                if (lessons) {
                     return {
-                        data: lessons, 
+                        data: lessons,
                         status: TTCSconfig.STATUS_SUCCESS
                     }
                 } else {
                     return {
-                        data: 'không tồn tại' , 
+                        data: 'không tồn tại',
                         status: TTCSconfig.STATUS_NO_EXIST
                     }
                 }
@@ -70,7 +79,7 @@ export default class LessonService {
                     updateDate: Date.now(),
                 })
                 return {
-                    data: newLesson, 
+                    data: newLesson,
                     status: TTCSconfig.STATUS_SUCCESS
                 }
             } catch (error) {
