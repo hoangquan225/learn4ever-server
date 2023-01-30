@@ -17,9 +17,17 @@ const UserSchema = new mongoose.Schema<UserInfoDoc, IUserSchema>(
         email: String,
         password: String,
         classNumber: Number,
-        phoneNumber: {type: String, default: ''},
-        address: {type: String, default: ''},
-        facebookId: {type: String, default: ''},
+        progess: [{
+            idTopic: {
+                type: mongoose.Types.ObjectId, 
+                ref: "Topic"
+            },
+            status: Number,
+            timeStudy: Number
+        }],
+        phoneNumber: { type: String, default: '' },
+        address: { type: String, default: '' },
+        facebookId: { type: String, default: '' },
         birth: { type: Number, default: 0 },
         gender: { type: Number, default: 0 },
         registerDate: { type: Number, default: 0 },

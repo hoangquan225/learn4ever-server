@@ -7,6 +7,7 @@ import { lessonRouter } from '../api/lesson';
 import { questionRouter } from '../api/question';
 import { tagRouter } from '../api/tag';
 import { topicRouter } from '../api/topic';
+import { uploadRouter } from '../api/upload';
 
 const router = Router();
 
@@ -19,5 +20,6 @@ router.use(lessonRouter);
 router.use(questionRouter);
 router.use(tagRouter);
 router.use(topicRouter);
+router.use(uploadRouter);
 
 export { router as webRouters };

@@ -6,6 +6,7 @@ import { UserInfo } from "../submodule/models/user";
 import { UserModel } from "../database/users";
 import { jwtDecodeToken } from '../utils/jwtToken';
 import { decrypt, encodeSHA256Pass, encrypt } from '../submodule/utils/crypto';
+import { BadRequestError } from '../common/errors';
 // import { UserDepartmentModel } from "../database/mongo/user_department";
 
 export default class UserService {
@@ -18,7 +19,7 @@ export default class UserService {
         return encodedPassword;
     }
 
-    updateUserInfo = async (body: {token:string, userInfo: UserInfo} ): Promise<{
+    updateUserInfo = async (body: { token: string, userInfo: UserInfo }): Promise<{
         status: number,
         userInfo: UserInfo | null,
     }> => {
@@ -40,7 +41,7 @@ export default class UserService {
                 status: TTCSconfig.STATUS_FAIL,
                 userInfo: null
             }
-        } 
+        }
     }
 
     checkUserFromToken = async (token: string): Promise<{
@@ -101,5 +102,46 @@ export default class UserService {
         const userInfo = await UserModel.findOne({ _id: body.userId })
 
         return new UserInfo(userInfo);
+    }
+
+    updateStudyedForUser = async (body: {
+        idTopic: string,
+        idUser: string,
+        status: number,
+        timeStudy: number
+    }) => {
+        const { idTopic, idUser, status, timeStudy } = body
+        try {
+            // get use 
+            const user = await UserModel.findOne({_id: idUser})
+            if (user) {
+                const userInfo = new UserInfo(user)
+                let newProgress = userInfo.progess
+                const progress = newProgress?.findIndex(o => o.idTopic == idTopic)
+                if(progress !== undefined && progress !== -1) {
+                    newProgress?.splice(progress, 1)
+                }
+                
+                const res = await UserModel.findOneAndUpdate(
+                    { _id: idUser }, 
+                    { $set: { progess: [...(newProgress || []), {
+                        status, 
+                        idTopic, 
+                        timeStudy
+                    }] }}, 
+                    { new: true }
+                )
+                return {
+                    data: res, 
+                    status: TTCSconfig.STATUS_SUCCESS
+                }
+            } else {
+                return {
+                    status: TTCSconfig.RESPONSIVE_NULL
+                }
+            }
+        } catch (error) {
+            throw new BadRequestError()
+        }
     }
 }

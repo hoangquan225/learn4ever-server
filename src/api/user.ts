@@ -43,4 +43,9 @@ userRouter.post(Endpoint.CHANGE_PASSWORD, asyncHandler(async (req, res) => {
     }
 }));
 
+userRouter.post(Endpoint.UPDATE_STUDYED_FOR_USER, asyncHandler(async (req, res) => {
+    const data = await userService.updateStudyedForUser(req.body)
+    return res.json(data)
+}))
+
 export { userRouter };
