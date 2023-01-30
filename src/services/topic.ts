@@ -35,13 +35,16 @@ export default class TopicService {
                 type: body.type,
             }).populate('topicChild')
             let total = 0
+            let totalLearned = 0
             data.forEach(o => {
                 total += o.topicChild.length
+                totalLearned += o.topicChild.filter(c => new Topic(c).status === TTCSconfig.STATUS_LEARNED).length
             })
 
             return {
                 data: data.map(o => new Topic(o)),
                 total,
+                totalLearned,
                 status: TTCSconfig.STATUS_SUCCESS
             }
         } catch (error) {
