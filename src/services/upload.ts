@@ -1,3 +1,5 @@
+import { BadRequestError } from "../common/errors";
+
 const { cloudinary } = require('../utils/cloudinary')
 
 class UploadService {
@@ -8,7 +10,9 @@ class UploadService {
             })
             return res.url
         } catch (err) {
-            return 'Upload error';
+            console.log(err);
+            
+            throw new BadRequestError()
         }
     }
 
@@ -22,22 +26,26 @@ class UploadService {
             }))
             return urls;
         } catch (err) {
-            return null
+            
+            throw new BadRequestError()
         }
     }
 
     uploadMultipleVideo = async (files: any): Promise<string[] | null> => {
         try {
-            const urls = Promise.all(files.map(async file => {
+            const urls = Promise.all(files?.map(async (file: any) => {
                 const res = await cloudinary.uploader.upload(file.path, {
                     upload_preset: 'video_upload',
                     resource_type: "video",
                 })
-                return res.url
+                return {
+                    url : res.url, 
+                    duration : res.duration
+                }
             }))
             return urls;
         } catch (err) {
-            return null
+            throw new BadRequestError()
         }
     }
 }
