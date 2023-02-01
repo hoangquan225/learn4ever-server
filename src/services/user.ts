@@ -7,6 +7,7 @@ import { UserModel } from "../database/users";
 import { jwtDecodeToken } from '../utils/jwtToken';
 import { decrypt, encodeSHA256Pass, encrypt } from '../submodule/utils/crypto';
 import { BadRequestError } from '../common/errors';
+import { TopicModel } from '../database/topic';
 // import { UserDepartmentModel } from "../database/mongo/user_department";
 
 export default class UserService {
@@ -139,6 +140,24 @@ export default class UserService {
                 return {
                     status: TTCSconfig.RESPONSIVE_NULL
                 }
+            }
+        } catch (error) {
+            throw new BadRequestError()
+        }
+    }
+
+    getTotalLearnedTopic = async (body: {
+        idCourse: string,
+        idUser: string,
+    }) => {
+        const { idCourse, idUser } = body
+        try {
+            const topics = await TopicModel.find({idCourse})
+            const user = await UserModel.findOne({_id: idUser})
+            const res = topics.filter((o1) => user?.progess?.some((o2) => o2.idTopic.toString() === o1._id.toString())).length;
+            return {
+                totalLearned: res,
+                status: TTCSconfig.STATUS_SUCCESS
             }
         } catch (error) {
             throw new BadRequestError()

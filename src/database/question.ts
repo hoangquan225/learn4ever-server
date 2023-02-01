@@ -19,7 +19,8 @@ const QuestionSchema = new mongoose.Schema<QuestionDoc, IQuestionSchema>(
         }], // đáp án đúng: có thể có nhiều đáp án đúng
         answer: [{
             index: Number,
-            text: String
+            text: String, 
+            isResult: Boolean,
         }], // đáp án,
         questionChild: {
             type: [mongoose.Types.ObjectId], 
