@@ -8,6 +8,7 @@ import { questionRouter } from '../api/question';
 import { tagRouter } from '../api/tag';
 import { topicRouter } from '../api/topic';
 import { uploadRouter } from '../api/upload';
+import { feedbackRouter } from '../api/feedback';
 
 const router = Router();
 
@@ -21,5 +22,6 @@ router.use(questionRouter);
 router.use(tagRouter);
 router.use(topicRouter);
 router.use(uploadRouter);
+router.use(feedbackRouter);
 
 export { router as webRouters };

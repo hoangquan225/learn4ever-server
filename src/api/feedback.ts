@@ -32,3 +32,5 @@ feedbackRouter.post(ENDPONTAPI.CREATE_FEEDBACK, asyncHandler(async (req, res) =>
         status : TTCSconfig.STATUS_SUCCESS
     })
 }))
+
+export { feedbackRouter }
