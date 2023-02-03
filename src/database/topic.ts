@@ -27,6 +27,7 @@ const TopicSchema = new mongoose.Schema<TopicDoc, ITopicSchema>(
         index : Number,
         video : String,
         topicType: Number,
+        score: Number,
         timeExam: Number,
         numQuestion: Number,
         createDate: {type: Number, default: Date.now()},
