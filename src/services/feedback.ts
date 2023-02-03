@@ -8,7 +8,7 @@ export default class FeedbackService {
     // get all 
     getFeedbacks = async () => {
         try {
-            const feedbacks = await FeedbackModel.find({})
+            const feedbacks = await FeedbackModel.find({}).populate('idUser').populate('idQuestion')
             const count = await FeedbackModel.countDocuments({})
             return {
                 data: feedbacks.map(feedback => new Feedback(feedback)), 
@@ -23,7 +23,7 @@ export default class FeedbackService {
         try {
             const feedbacks = await FeedbackModel.find({
                 idCourse : body.idCourse
-            })
+            }).populate('idUser').populate('idQuestion')
             const count = await FeedbackModel.countDocuments({
                 idCourse : body.idCourse
             })

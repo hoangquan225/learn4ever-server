@@ -7,7 +7,7 @@ import TTCSconfig from '../submodule/common/config';
 const feedbackRouter = express.Router();
 const feedbackService = new FeedbackService();
 
-feedbackRouter.post(ENDPONTAPI.GET_FEEDBACKS, asyncHandler(async (req, res) => {
+feedbackRouter.get(ENDPONTAPI.GET_FEEDBACKS, asyncHandler(async (req, res) => {
     const {data, count} = await feedbackService.getFeedbacks()
     return res.json({
         data,

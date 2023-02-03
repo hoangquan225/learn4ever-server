@@ -2,6 +2,7 @@ import mongoose, { Document, Model, model } from "mongoose";
 import { Feedback } from "../submodule/models/feedback";
 import { courseTable } from "./course";
 import { questionTable } from "./question";
+import {userTableName} from './users'
 
 export const feedbackTable = "Feedback";
 interface IFeedbackSchema extends Model<FeedbackDoc> {
@@ -23,8 +24,12 @@ const FeedbackSchema = new mongoose.Schema<FeedbackDoc, IFeedbackSchema>(
             type: mongoose.Types.ObjectId, 
             ref: courseTable
         },
+        idUser: {
+            type: mongoose.Types.ObjectId, 
+            ref: userTableName
+        },
         content: String,
-        type: Number,
+        type: [Number],
         createDate: {type: Number, default: Date.now()},
         updateDate: {type: Number, default: Date.now()},
     },
