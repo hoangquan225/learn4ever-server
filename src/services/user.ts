@@ -109,9 +109,15 @@ export default class UserService {
         idTopic: string,
         idUser: string,
         status: number,
-        timeStudy: number
+        timeStudy: number,
+        score: number,
+        correctQuestion: number,
+        answers: Array<{
+            idQuestion : string, 
+            idAnswer: string
+        }>
     }) => {
-        const { idTopic, idUser, status, timeStudy } = body
+        const { idTopic, idUser, status, timeStudy, score, correctQuestion, answers } = body
         try {
             // get use 
             const user = await UserModel.findOne({_id: idUser})
@@ -128,7 +134,10 @@ export default class UserService {
                     { $set: { progess: [...(newProgress || []), {
                         status, 
                         idTopic, 
-                        timeStudy
+                        timeStudy,
+                        score,
+                        correctQuestion,
+                        answers
                     }] }}, 
                     { new: true }
                 )

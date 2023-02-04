@@ -23,7 +23,13 @@ const UserSchema = new mongoose.Schema<UserInfoDoc, IUserSchema>(
                 ref: "Topic"
             },
             status: Number,
-            timeStudy: Number
+            timeStudy: Number,
+            score: Number,
+            correctQuestion: Number,
+            answers: [{
+                idQuestion : String, 
+                idAnswer: String
+            }]
         }],
         phoneNumber: { type: String, default: '' },
         address: { type: String, default: '' },
