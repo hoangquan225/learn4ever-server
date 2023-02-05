@@ -17,7 +17,16 @@ feedbackRouter.get(ENDPONTAPI.GET_FEEDBACKS, asyncHandler(async (req, res) => {
 }))
 
 feedbackRouter.post(ENDPONTAPI.GET_FEEDBACKS_BY_COURSE, asyncHandler(async (req, res) => {
-    const {data, count} = await feedbackService.getFeedbacksByCourse({idCourse: `${req.params.idCourse}`})
+    const {data, count} = await feedbackService.getFeedbacksByCourse({idCourse: `${req.query.idCourse}`})
+    return res.json({
+        data,
+        count,
+        status : TTCSconfig.STATUS_SUCCESS
+    })
+}))
+
+feedbackRouter.post(ENDPONTAPI.GET_FEEDBACKS_BY_TYPE_OR_COURSE, asyncHandler(async (req, res) => {
+    const {data, count} = await feedbackService.getFeedbacksByTypeOrCourse({type: req.query.type as string[], idCourse: `${req.query.idCourse}`})
     return res.json({
         data,
         count,

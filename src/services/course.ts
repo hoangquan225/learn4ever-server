@@ -16,6 +16,7 @@ export default class CourseService {
 
     // get by id tag or category
     getByIdTagAndCategory = async (body: {idCategory: string, idTag: string, status: number}): Promise<Course[]> => {
+        
         try {
             if(body.idTag !== "undefined" && body.idCategory !== "undefined") {
                 const courses = await CourseModel.find({idTag: body.idTag, idCategory: body.idCategory, status: body.status})
