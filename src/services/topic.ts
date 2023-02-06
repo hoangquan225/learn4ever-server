@@ -26,23 +26,41 @@ export default class TopicService {
     getTopicsByCourse = async (body: {
         idCourse: string,
         type: number,
-        parentId: string | null
+        parentId: string | null,
+        status: number
     }) => {
         try {
-            const data = await TopicModel.find({
-                idCourse: body.idCourse,
-                parentId: body.parentId,
-                type: body.type,
-            }).populate('topicChild')
-            let total = 0
-            data.forEach(o => {
-                total += o.topicChild.length
-            })
-
-            return {
-                data: data.map(o => new Topic(o)),
-                total,
-                status: TTCSconfig.STATUS_SUCCESS
+            if(body.status) {
+                const data = await TopicModel.find({
+                    idCourse: body.idCourse,
+                    parentId: body.parentId,
+                    type: body.type,
+                    status: body.status,
+                }).populate('topicChild')
+                let total = 0
+                data.forEach(o => {
+                    o.topicChild.map(c => new Topic(c).status === body.status &&  total++)
+                })
+                return {
+                    data: data.map(o => new Topic(o)),
+                    total,
+                    status: TTCSconfig.STATUS_SUCCESS
+                }
+            }else{
+                const data = await TopicModel.find({
+                    idCourse: body.idCourse,
+                    parentId: body.parentId,
+                    type: body.type,
+                }).populate('topicChild')
+                let total = 0
+                data.forEach(o => {
+                    o.topicChild.map(c => new Topic(c).status === body.status &&  total++)
+                }) 
+                return {
+                    data: data.map(o => new Topic(o)),
+                    total,
+                    status: TTCSconfig.STATUS_SUCCESS
+                }
             }
         } catch (error) {
             throw new BadRequestError();

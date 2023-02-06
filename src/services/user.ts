@@ -161,7 +161,7 @@ export default class UserService {
     }) => {
         const { idCourse, idUser } = body
         try {
-            const topics = await TopicModel.find({idCourse})
+            const topics = await TopicModel.find({idCourse, status: TTCSconfig.STATUS_PUBLIC})
             const user = await UserModel.findOne({_id: idUser})
             const res = topics.filter((o1) => user?.progess?.some((o2) => o2.idTopic.toString() === o1._id.toString() && o1.type === 1)).length;
             return {
