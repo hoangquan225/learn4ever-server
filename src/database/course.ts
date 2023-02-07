@@ -16,6 +16,7 @@ const CourseSchema = new mongoose.Schema<CourseDoc, ICourseSchema>(
         courseName: String,
         status: Number,
         des: String,
+        shortDes: String,
         slug: String,
         avatar: String,
         idCategory: {
