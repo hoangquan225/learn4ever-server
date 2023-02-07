@@ -35,6 +35,7 @@ const QuestionSchema = new mongoose.Schema<QuestionDoc, IQuestionSchema>(
             type: mongoose.Types.ObjectId, 
             ref: topicTable
         },
+        hint: String,
         index : Number,
         createDate: {type : Number, default: Date.now()},
         updateDate: {type: Number, default: Date.now()},
