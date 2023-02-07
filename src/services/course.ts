@@ -14,6 +14,15 @@ export default class CourseService {
         }
     }
 
+    getCourseById =async (body:{id: string}) => {
+        try {
+            const course = await CourseModel.findOne({_id : body.id})
+            return course
+        } catch (error) {
+            throw new BadRequestError()
+        }
+    }
+
     // get by id tag or category
     getByIdTagAndCategory = async (body: {idCategory: string, idTag: string, status: number}): Promise<Course[]> => {
         try {

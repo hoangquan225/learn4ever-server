@@ -38,6 +38,7 @@ const UserSchema = new mongoose.Schema<UserInfoDoc, IUserSchema>(
         gender: { type: Number, default: 0 },
         registerDate: { type: Number, default: 0 },
         status: { type: Number, default: 1 },
+        userRole: {type: Number, default: 1},
         lastLogin: { type: Number, default: 0 },
     },
     {

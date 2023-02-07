@@ -16,6 +16,14 @@ courseRouter.post(Endpoint.GET_COURSES_BY_STATUS, asyncHandler(async (req, res) 
     })
 }))
 
+courseRouter.post(Endpoint.GET_COURSES_BY_ID, asyncHandler(async (req, res) => {
+    const data = await courseService.getCourseById({id : `${req.query.id}`})
+    return res.json({
+        data,
+        status : TTCSconfig.STATUS_SUCCESS
+    })
+}))
+
 courseRouter.post(Endpoint.GET_COURSES_BY_ID_TAG_AND_CATEGORY, asyncHandler(async (req, res) => {
     const data = await courseService.getByIdTagAndCategory({idCategory: `${req.query.idCategory}`, idTag: `${req.query.idTag}`, status : Number(req.query.status)})
     return res.json({
