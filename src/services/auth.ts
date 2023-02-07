@@ -13,11 +13,11 @@ class AuthServices {
         const encodedPassword = encodeSHA256Pass(userObject.account, decryptedResult);
         return encodedPassword;
     }
-    login = async (body: { account: string, password: string }): Promise<UserInfo> => {
+    login = async (body: { account: string, password: string, userRole?: number }): Promise<UserInfo> => {
         const passEncode = this.processPass(body);
         let userInfo = new UserInfo({ ...body, password: body.password });
         try {
-            const checkUserAcc: UserInfo | null = await UserModel.findOne({ account: userInfo.account });
+            const checkUserAcc: UserInfo | null = await UserModel.findOne(typeof body.userRole === 'number' ? {account: userInfo.account, userRole: body.userRole} : { account: userInfo.account });
             if (checkUserAcc) {
                 if (passEncode === checkUserAcc.password) {
                     userInfo = new UserInfo(checkUserAcc);

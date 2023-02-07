@@ -12,7 +12,7 @@ const authRouter = express.Router();
 
 const authService = new AuthServices();
 authRouter.post(Endpoint.LOGIN, asyncHandler(async (req, res) => {
-    const body: { account: string, password: string } = req.body;
+    const body: { account: string, password: string, userRole?:number } = req.body;
     if (!body.account || !body.password) {
         throw res.json(new BadRequestError('invalid account or password'));
     } else {
