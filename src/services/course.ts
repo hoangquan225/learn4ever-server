@@ -52,7 +52,7 @@ export default class CourseService {
             }).populate('idCategory')
             if(!course) statusRes = TTCSconfig.RESPONSIVE_NULL
             return {
-                data: new Course(course), 
+                data: course? new Course(course) : null, 
                 status : statusRes
             }
         } catch (error) {
