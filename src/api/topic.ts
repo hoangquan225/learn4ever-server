@@ -30,7 +30,8 @@ topicRouter.post(Endpoint.GET_TOPIC_BY_COURSE, asyncHandler(async (req, res) => 
     const data = await topicService.getTopicsByCourse({
         idCourse: `${req.query.idCourse}`,
         type: Number(req.query.type),
-        parentId: req.query.parentId ? `${req.query.parentId}` : null
+        parentId: req.query.parentId ? `${req.query.parentId}` : null,
+        status:  Number(req.query.status)
     })
     return res.json(data)
 }))
