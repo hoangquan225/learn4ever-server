@@ -29,10 +29,7 @@ const UserSchema = new mongoose.Schema<UserInfoDoc, IUserSchema>(
             answers: [{
                 idQuestion : String, 
                 idAnswer: String
-            }],
-            correctAnswers: [{
-                idQuestion : String
-            }],
+            }]
         }],
         phoneNumber: { type: String, default: '' },
         address: { type: String, default: '' },
