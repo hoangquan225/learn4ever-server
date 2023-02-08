@@ -3,6 +3,7 @@ import { UserInfo } from "../submodule/models/user";
 import { UserModel } from "../database/users";
 import { decrypt, encodeSHA256Pass, encrypt } from "../submodule/utils/crypto";
 import { jwtDecodeToken, jwtEncode } from "../utils/jwtToken";
+import moment from "moment";
 
 class AuthServices {
     private processPass(userObject: {
@@ -74,5 +75,24 @@ class AuthServices {
     //     userCacheClient.setex(tokenKey, time, token);
     //     }
     // }
+
+    logout = async (body: {idUser: string}) => {
+        try {
+            const user = await UserModel.findOne({_id: body.idUser})
+            let status = TTCSconfig.STATUS_FAIL
+            if(user) {
+                const userInfo = new UserInfo(user)
+                const res = await UserModel.findOneAndUpdate(
+                    { _id: body.idUser }, 
+                    {  $set: { lastLogin: moment().valueOf() }}, 
+                    { new: true }
+                )
+                return {status: TTCSconfig.STATUS_SUCCESS}
+            }
+            return {status}
+        } catch (error) {
+            return {status:TTCSconfig.STATUS_FAIL}
+        }
+    }
 }
 export { AuthServices };

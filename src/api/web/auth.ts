@@ -25,9 +25,10 @@ authRouter.post(Endpoint.LOGIN, asyncHandler(async (req, res) => {
     }
 }));
 authRouter.post(Endpoint.LOGOUT, asyncHandler(async (req, res) => {
-    console.log("AAAAAAAA");
-
-    return res.json([]);
+    const { status } = await authService.logout(req.body);
+    return res.json({
+        status
+    })
 }));
 
 authRouter.post(Endpoint.REGISTER, asyncHandler(async (req, res) => {
