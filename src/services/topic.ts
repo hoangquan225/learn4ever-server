@@ -16,8 +16,11 @@ export default class TopicService {
 
     getTopicById = async (body: { id: string }) => {
         try {
-            const topic = await TopicModel.findOne({ _id: body.id })
-            return topic
+            const topic = await TopicModel.findOne({ _id: body.id }).populate('topicChild').populate({
+                path: "timePracticeInVideo", 
+                populate: "idQuestion"
+            })
+            return new Topic(topic)
         } catch (error) {
             throw new BadRequestError();
         }

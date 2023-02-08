@@ -22,15 +22,23 @@ const TopicSchema = new mongoose.Schema<TopicDoc, ITopicSchema>(
             type: mongoose.Types.ObjectId, 
             ref: topicTable
         },
+        timePracticeInVideo: [{
+            time: Number,
+            totalQuestion: Number, 
+            idQuestion: {
+                type: [mongoose.Types.ObjectId],
+                ref: "Question"
+            }
+        }],
         type: Number,
         des: String,
-        index : Number,
-        video : String,
+        index: Number,
+        video: String,
         topicType: Number,
         timeExam: Number,
         numQuestion: Number,
-        createDate: {type: Number, default: Date.now()},
-        updateDate: {type: Number, default: Date.now()},
+        createDate: { type: Number, default: Date.now() },
+        updateDate: { type: Number, default: Date.now() },
     },
     {
         versionKey: false,
