@@ -9,6 +9,7 @@ import { tagRouter } from '../api/tag';
 import { topicRouter } from '../api/topic';
 import { uploadRouter } from '../api/upload';
 import { feedbackRouter } from '../api/feedback';
+import { statisticRouter } from '../api/CMS/statistic';
 
 const router = Router();
 
@@ -23,5 +24,6 @@ router.use(tagRouter);
 router.use(topicRouter);
 router.use(uploadRouter);
 router.use(feedbackRouter);
+router.use(statisticRouter)
 
 export { router as webRouters };
