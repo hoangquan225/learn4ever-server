@@ -6,6 +6,7 @@ import dotenv from './src/utils/dotenv';
 import logger from './src/utils/logger';
 import connectDatabase from './src/utils/mongodb';
 import { webRouters } from './src/routes/index';
+import { initSocket } from './src/socket';
 // import { initSocket } from './src/sockets';
 // import discordApp from './src/discord/modules/discord'
 const PREFIX_API = "/api"
@@ -45,7 +46,7 @@ class App {
             this.server.listen(this.port, () => {
                 logger.info(`Server is running on port ${this.port}`);
             });
-            // initSocket(this.server);
+            initSocket(this.server);
             // if (process.env.DISABLE_DISCORD !== "true") {
             //     discordApp.login()
             //         .then(res => {
