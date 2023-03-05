@@ -17,3 +17,5 @@ commentRouter.post(ENDPONTAPI.GET_COMMENT, asyncHandler(async (req, res) => {
     
     return res.json(data)
 }))
+
+export {commentRouter}

@@ -21,7 +21,7 @@ export default class CommentService {
             },
           },
           { new: true }
-        ).populate(userTableName);
+        ).populate("idUser");
         if (!comment) {
           return {
             data: "không tồn tại",
@@ -44,8 +44,8 @@ export default class CommentService {
           ...body,
           createDate: Date.now(),
           updateDate: Date.now(),
-        });
-        commentData = new Comment(newComment.populate(userTableName));
+        }).then(res=> res.populate("idUser"));
+        commentData = new Comment(newComment);
         realTime && sendCommentSocket({ comment: commentData });
         return {
           data: commentData,
@@ -62,7 +62,7 @@ export default class CommentService {
       const { idTopic } = body;
       const comments = await CommentModel.find({
         idTopic,
-      }).populate(userTableName);
+      }).populate("idUser");
       return {
         data: comments.map((comment) => new Comment(comment)),
         status: TTCSconfig.STATUS_SUCCESS,
