@@ -15,9 +15,13 @@ export function initSocket(srv: Server) {
             socket.join("general_room");
             io.emit("join_socket", `${props.userInfo?.name} connected`);
         });
-        socket.on("join_room_comment", (props: { comment: Comment }) => {
-            socket.join(`comment_room_${props.comment.idTopic}`);
-            io.emit("join_room_comment", `${props.comment?.userInfo?.name} connected in room comment`);
+        socket.on("join_room_comment", (props: { idTopic: string, userInfo: UserInfo }) => {
+            socket.join(`comment_room_${props.idTopic}`);
+            io.in(`comment_room_${props.idTopic}`).emit("join_room_comment", `${props?.userInfo?.name} connected in comment_room_${props.idTopic}`);
+        });
+        socket.on("leave_room_comment", (props: { idTopic: string, userInfo: UserInfo }) => {
+            socket.leave(`comment_room_${props.idTopic}`);
+            io.emit("leave_room_comment", `${props?.userInfo?.name} leaved comment_room_${props.idTopic}`);
         });
     });
 

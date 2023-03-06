@@ -57,14 +57,24 @@ export default class CommentService {
     }
   };
 
-  getCommentsByIdTopic = async (body: { idTopic: string }) => {
+  getCommentsByIdTopic = async (body: { idTopic: string, limit: number, skip: number }) => {
     try {
-      const { idTopic } = body;
-      const comments = await CommentModel.find({
-        idTopic,
-      }).populate("idUser");
+      const { idTopic, limit, skip } = body;
+      const comments = await Promise.all([
+        CommentModel.find({
+          idTopic,
+        })
+        .skip(skip)
+        .limit(limit)
+        .populate("idUser")
+        .sort({"index": 1}), 
+        CommentModel.countDocuments({
+          idTopic
+        })
+      ])
       return {
-        data: comments.map((comment) => new Comment(comment)),
+        data: comments[0].map((comment) => new Comment(comment)),
+        total: comments[1],
         status: TTCSconfig.STATUS_SUCCESS,
       };
     } catch (error) {
