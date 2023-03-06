@@ -35,7 +35,7 @@ feedbackRouter.post(ENDPONTAPI.GET_FEEDBACKS_BY_TYPE_OR_COURSE, asyncHandler(asy
 }))
 
 feedbackRouter.post(ENDPONTAPI.CREATE_FEEDBACK, asyncHandler(async (req, res) => {
-    const data = await feedbackService.createFeedback(req.body)
+    const data = await feedbackService.updateFeedback(req.body)
     return res.json({
         data,
         status : TTCSconfig.STATUS_SUCCESS

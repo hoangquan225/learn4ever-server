@@ -1,6 +1,7 @@
 import moment from "moment";
 import { BadRequestError } from "../common/errors";
 import { FeedbackModel } from "../database/feedback";
+import TTCSconfig from "../submodule/common/config";
 import { Feedback } from "../submodule/models/feedback";
 
 
@@ -65,17 +66,35 @@ export default class FeedbackService {
         }
     }
 
-    // create 
-    createFeedback = async (body: Feedback): Promise<Feedback> => {
-        try {
-            const feedback = await FeedbackModel.create({
-                ...body, 
-                createDate: moment(),
-                updateDate: moment()
-            })
-            return feedback
-        } catch (error) {
-            throw new BadRequestError()
+    updateFeedback = async (body: Feedback)=> {
+        if (body?.id) {
+            // update
+            try {
+                const feedback = await FeedbackModel.findOneAndUpdate(
+                    { _id: body?.id },
+                    {
+                        $set: {
+                            ...body,
+                            updateDate: moment()
+                        }
+                    },
+                    { new: true }
+                );
+                return feedback
+            } catch (error) {
+                throw new BadRequestError();
+            }
+        } else {
+            try {
+                const feedback = await FeedbackModel.create({
+                    ...body, 
+                    createDate: moment(),
+                    updateDate: moment()
+                })
+                return feedback
+            } catch (error) {
+                throw new BadRequestError()
+            }
         }
     } 
 }
