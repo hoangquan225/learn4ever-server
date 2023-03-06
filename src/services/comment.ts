@@ -63,13 +63,15 @@ export default class CommentService {
       const comments = await Promise.all([
         CommentModel.find({
           idTopic,
+          status: TTCSconfig.STATUS_PUBLIC
         })
         .skip(skip)
         .limit(limit)
         .populate("idUser")
         .sort({"index": 1}), 
         CommentModel.countDocuments({
-          idTopic
+          idTopic,
+          status: TTCSconfig.STATUS_PUBLIC
         })
       ])
       return {
