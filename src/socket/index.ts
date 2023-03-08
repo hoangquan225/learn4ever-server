@@ -23,6 +23,9 @@ export function initSocket(srv: Server) {
             socket.leave(`comment_room_${props.idTopic}`);
             io.emit("leave_room_comment", `${props?.userInfo?.name} leaved comment_room_${props.idTopic}`);
         });
+        socket.on("writing_comment", (props: { idTopic: string, userInfo: UserInfo }) => {
+            io.in(`comment_room_${props.idTopic}`).emit("writing_comment", props.userInfo)
+        })
     });
 
     io.on('disconnect', () => {
