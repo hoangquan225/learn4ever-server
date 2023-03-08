@@ -48,15 +48,15 @@ export default class FeedbackService {
             let feedbacks
             let count
             if(type !== undefined && idCourse !== "") {
-                feedbacks = await FeedbackModel.find({type: {$all: type}, idCourse,  status: { $exists: true, $ne: -1 }}).skip(skip).limit(limit) 
-                count = await FeedbackModel.countDocuments({type: {$all: type}, idCourse,  status: { $exists: true, $ne: -1 }}).populate('idUser').populate('idQuestion')
+                feedbacks = await FeedbackModel.find({type: {$all: type}, idCourse,  status: { $exists: true, $ne: -1 }}).skip(skip).limit(limit).populate('idUser').populate('idQuestion')
+                count = await FeedbackModel.countDocuments({type: {$all: type}, idCourse,  status: { $exists: true, $ne: -1 }})
             }else if (type !== undefined) {
-                feedbacks = await FeedbackModel.find({type: {$all: type}, status: { $exists: true, $ne: -1 }})   
-                count = await FeedbackModel.countDocuments({type: {$all: type}, status: { $exists: true, $ne: -1 }}).populate('idUser').populate('idQuestion')
+                feedbacks = await FeedbackModel.find({type: {$all: type}, status: { $exists: true, $ne: -1 }}).skip(skip).limit(limit).populate('idUser').populate('idQuestion')
+                count = await FeedbackModel.countDocuments({type: {$all: type}, status: { $exists: true, $ne: -1 }})
             } else {
                 feedbacks = await FeedbackModel.find({
                     idCourse : body.idCourse, status: { $exists: true, $ne: -1 }
-                }).populate('idUser').populate('idQuestion')
+                }).skip(skip).limit(limit).populate('idUser').populate('idQuestion')
                 count = await FeedbackModel.countDocuments({
                     idCourse : body.idCourse, status: { $exists: true, $ne: -1 } 
                 })
