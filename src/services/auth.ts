@@ -4,6 +4,7 @@ import { UserModel } from "../database/users";
 import { decrypt, encodeSHA256Pass, encrypt } from "../submodule/utils/crypto";
 import { jwtDecodeToken, jwtEncode } from "../utils/jwtToken";
 import moment from "moment";
+import e from "express";
 
 class AuthServices {
     private processPass(userObject: {
@@ -61,6 +62,37 @@ class AuthServices {
                 };
             }
             return { ...userInfo, loginCode: TTCSconfig.LOGIN_ACCOUNT_IS_USED }
+        } catch (err) {
+            userInfo.loginCode = TTCSconfig.LOGIN_FAILED;
+        }
+    }
+
+    loginWithGoogle = async (body: UserInfo): Promise<any> => {
+        let userInfo = new UserInfo(body);
+        try {
+            // const account = userInfo.account?.trim().toLowerCase();
+            const facebookId = userInfo.facebookId;
+
+            const checkUserAcc: UserInfo | null = await UserModel.findOne({ facebookId });
+            if (!checkUserAcc) {
+                // luu vao db
+                const newUserInfo = {
+                    ...userInfo,
+                    registerDate: Date.now(),
+                    status: TTCSconfig.UserStatus.NORMAL,
+                    lastLogin: Date.now()
+                }
+                const newUser = await UserModel.create(newUserInfo)
+                const token = jwtEncode(newUser?._id, 2592000);
+                return {
+                    ...newUserInfo, _id: newUser._id, loginCode: TTCSconfig.LOGIN_SUCCESS, token
+                };
+            } else {
+                userInfo = new UserInfo(checkUserAcc);
+                userInfo.loginCode = TTCSconfig.LOGIN_SUCCESS;
+                userInfo.token = jwtEncode(userInfo?._id, 60*60*24*30);
+                return userInfo
+            }
         } catch (err) {
             userInfo.loginCode = TTCSconfig.LOGIN_FAILED;
         }
