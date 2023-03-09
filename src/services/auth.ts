@@ -15,6 +15,12 @@ class AuthServices {
         const encodedPassword = encodeSHA256Pass(userObject.account, decryptedResult);
         return encodedPassword;
     }
+    private createToken(user: UserInfo) {
+        let userInfo = new UserInfo(user);
+        userInfo.loginCode = TTCSconfig.LOGIN_SUCCESS;
+        userInfo.token = jwtEncode(userInfo?._id, 60 * 60 * 24 * 30);
+        return userInfo
+    }
     login = async (body: { account: string, password: string, userRole?: number }): Promise<UserInfo> => {
         const passEncode = this.processPass(body);
         let userInfo = new UserInfo({ ...body, password: body.password });
@@ -56,10 +62,7 @@ class AuthServices {
                     lastLogin: Date.now()
                 }
                 const newUser = await UserModel.create(newUserInfo)
-                const token = jwtEncode(newUser?._id, 2592000);
-                return {
-                    ...newUserInfo, _id: newUser._id, loginCode: TTCSconfig.LOGIN_SUCCESS, token
-                };
+                return this.createToken(newUser)
             }
             return { ...userInfo, loginCode: TTCSconfig.LOGIN_ACCOUNT_IS_USED }
         } catch (err) {
@@ -83,15 +86,9 @@ class AuthServices {
                     lastLogin: Date.now()
                 }
                 const newUser = await UserModel.create(newUserInfo)
-                const token = jwtEncode(newUser?._id, 2592000);
-                return {
-                    ...newUserInfo, _id: newUser._id, loginCode: TTCSconfig.LOGIN_SUCCESS, token
-                };
+                return this.createToken(newUser)
             } else {
-                userInfo = new UserInfo(checkUserAcc);
-                userInfo.loginCode = TTCSconfig.LOGIN_SUCCESS;
-                userInfo.token = jwtEncode(userInfo?._id, 60*60*24*30);
-                return userInfo
+                return this.createToken(checkUserAcc)
             }
         } catch (err) {
             userInfo.loginCode = TTCSconfig.LOGIN_FAILED;
@@ -115,7 +112,7 @@ class AuthServices {
             if(user) {
                 const userInfo = new UserInfo(user)
                 const res = await UserModel.findOneAndUpdate(
-                    { _id: body.idUser }, 
+                    { _id: body.idUser },
                     {  $set: { lastLogin: moment().valueOf() }}, 
                     { new: true }
                 )
