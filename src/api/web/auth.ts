@@ -48,7 +48,7 @@ authRouter.post(Endpoint.REGISTER, asyncHandler(async (req, res) => {
 
 
 authRouter.post(Endpoint.LOGIN_WITH_GOOGLE, asyncHandler(async (req, res) => {
-    const body = <UserInfo>req.body;
+    const body = req.body;
 
     const { loginCode, token, ...userInfo } = await authService.loginWithGoogle(body);
     return res.json({
