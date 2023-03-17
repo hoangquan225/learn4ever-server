@@ -4,6 +4,7 @@ import { UserModel } from "../database/users";
 import { decrypt, encodeSHA256Pass, encrypt } from "../submodule/utils/crypto";
 import { jwtDecodeToken, jwtEncode } from "../utils/jwtToken";
 import moment from "moment";
+import e from "express";
 
 class AuthServices {
     private processPass(userObject: {
@@ -13,6 +14,12 @@ class AuthServices {
         const decryptedResult = decrypt(userObject.password);
         const encodedPassword = encodeSHA256Pass(userObject.account, decryptedResult);
         return encodedPassword;
+    }
+    private createToken(user: UserInfo) {
+        let userInfo = new UserInfo(user);
+        userInfo.loginCode = TTCSconfig.LOGIN_SUCCESS;
+        userInfo.token = jwtEncode(userInfo?._id, 60 * 60 * 24 * 30);
+        return userInfo
     }
     login = async (body: { account: string, password: string, userRole?: number }): Promise<UserInfo> => {
         const passEncode = this.processPass(body);
@@ -55,12 +62,34 @@ class AuthServices {
                     lastLogin: Date.now()
                 }
                 const newUser = await UserModel.create(newUserInfo)
-                const token = jwtEncode(newUser?._id, 2592000);
-                return {
-                    ...newUserInfo, _id: newUser._id, loginCode: TTCSconfig.LOGIN_SUCCESS, token
-                };
+                return this.createToken(newUser)
             }
             return { ...userInfo, loginCode: TTCSconfig.LOGIN_ACCOUNT_IS_USED }
+        } catch (err) {
+            userInfo.loginCode = TTCSconfig.LOGIN_FAILED;
+        }
+    }
+
+    loginWithGoogle = async (body: UserInfo): Promise<any> => {
+        let userInfo = new UserInfo(body);
+        try {
+            // const account = userInfo.account?.trim().toLowerCase();
+            const facebookId = userInfo.facebookId;
+
+            const checkUserAcc: UserInfo | null = await UserModel.findOne({ facebookId });
+            if (!checkUserAcc) {
+                // luu vao db
+                const newUserInfo = {
+                    ...userInfo,
+                    registerDate: Date.now(),
+                    status: TTCSconfig.UserStatus.NORMAL,
+                    lastLogin: Date.now()
+                }
+                const newUser = await UserModel.create(newUserInfo)
+                return this.createToken(newUser)
+            } else {
+                return this.createToken(checkUserAcc)
+            }
         } catch (err) {
             userInfo.loginCode = TTCSconfig.LOGIN_FAILED;
         }
@@ -83,7 +112,7 @@ class AuthServices {
             if(user) {
                 const userInfo = new UserInfo(user)
                 const res = await UserModel.findOneAndUpdate(
-                    { _id: body.idUser }, 
+                    { _id: body.idUser },
                     {  $set: { lastLogin: moment().valueOf() }}, 
                     { new: true }
                 )

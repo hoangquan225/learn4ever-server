@@ -1,15 +1,21 @@
 import moment from "moment";
 import { BadRequestError } from "../common/errors";
 import { FeedbackModel } from "../database/feedback";
+import TTCSconfig from "../submodule/common/config";
 import { Feedback } from "../submodule/models/feedback";
 
 
 export default class FeedbackService {
     // get all 
-    getFeedbacks = async () => {
+    getFeedbacks = async (body: { limit: number, skip: number }) => {
         try {
-            const feedbacks = await FeedbackModel.find({}).populate('idUser').populate('idQuestion')
-            const count = await FeedbackModel.countDocuments({})
+            const { limit, skip } = body;
+            const feedbacks = await FeedbackModel.find({ status: { $exists: true, $ne: -1 } })
+            .skip(skip)
+            .limit(limit)
+            .populate('idUser')
+            .populate('idQuestion')
+            const count = await FeedbackModel.countDocuments({ status: { $exists: true, $ne: -1 } })
             return {
                 data: feedbacks.map(feedback => new Feedback(feedback)), 
                 count
@@ -22,7 +28,7 @@ export default class FeedbackService {
     getFeedbacksByCourse = async (body: {idCourse: string}) => {
         try {
             const feedbacks = await FeedbackModel.find({
-                idCourse : body.idCourse
+                idCourse : body.idCourse, status: { $exists: true, $ne: -1 }
             }).populate('idUser').populate('idQuestion')
             const count = await FeedbackModel.countDocuments({
                 idCourse : body.idCourse
@@ -36,24 +42,23 @@ export default class FeedbackService {
         }
     }
 
-    getFeedbacksByTypeOrCourse = async (body: { type: string[], idCourse: string}) => {
-        const {type, idCourse} = body
+    getFeedbacksByTypeOrCourse = async (body: { type: string[], idCourse: string, limit: number, skip: number}) => {
+        const {type, idCourse, limit, skip} = body
         try {
-            console.log( {type: type === undefined, idCourse: idCourse});
             let feedbacks
             let count
             if(type !== undefined && idCourse !== "") {
-                feedbacks = await FeedbackModel.find({type: {$all: type}, idCourse })   
-                count = await FeedbackModel.countDocuments({type: {$all: type}, idCourse }).populate('idUser').populate('idQuestion')
+                feedbacks = await FeedbackModel.find({type: {$all: type}, idCourse,  status: { $exists: true, $ne: -1 }}).skip(skip).limit(limit).populate('idUser').populate('idQuestion')
+                count = await FeedbackModel.countDocuments({type: {$all: type}, idCourse,  status: { $exists: true, $ne: -1 }})
             }else if (type !== undefined) {
-                feedbacks = await FeedbackModel.find({type: {$all: type}})   
-                count = await FeedbackModel.countDocuments({type: {$all: type}}).populate('idUser').populate('idQuestion')
+                feedbacks = await FeedbackModel.find({type: {$all: type}, status: { $exists: true, $ne: -1 }}).skip(skip).limit(limit).populate('idUser').populate('idQuestion')
+                count = await FeedbackModel.countDocuments({type: {$all: type}, status: { $exists: true, $ne: -1 }})
             } else {
                 feedbacks = await FeedbackModel.find({
-                    idCourse : body.idCourse
-                }).populate('idUser').populate('idQuestion')
+                    idCourse : body.idCourse, status: { $exists: true, $ne: -1 }
+                }).skip(skip).limit(limit).populate('idUser').populate('idQuestion')
                 count = await FeedbackModel.countDocuments({
-                    idCourse : body.idCourse
+                    idCourse : body.idCourse, status: { $exists: true, $ne: -1 } 
                 })
             }
             return {
@@ -65,17 +70,35 @@ export default class FeedbackService {
         }
     }
 
-    // create 
-    createFeedback = async (body: Feedback): Promise<Feedback> => {
-        try {
-            const feedback = await FeedbackModel.create({
-                ...body, 
-                createDate: moment(),
-                updateDate: moment()
-            })
-            return feedback
-        } catch (error) {
-            throw new BadRequestError()
+    updateFeedback = async (body: Feedback)=> {
+        if (body?.id) {
+            // update
+            try {
+                const feedback = await FeedbackModel.findOneAndUpdate(
+                    { _id: body?.id },
+                    {
+                        $set: {
+                            ...body,
+                            updateDate: moment()
+                        }
+                    },
+                    { new: true }
+                );
+                return feedback
+            } catch (error) {
+                throw new BadRequestError();
+            }
+        } else {
+            try {
+                const feedback = await FeedbackModel.create({
+                    ...body, 
+                    createDate: moment(),
+                    updateDate: moment()
+                })
+                return feedback
+            } catch (error) {
+                throw new BadRequestError()
+            }
         }
     } 
 }
