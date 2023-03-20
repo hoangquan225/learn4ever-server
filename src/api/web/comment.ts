@@ -12,6 +12,12 @@ commentRouter.post(ENDPONTAPI.UPDATE_COMMENT, asyncHandler(async (req, res) => {
     return res.json(data)
 }))
 
+commentRouter.post(ENDPONTAPI.SEND_REACTION_COMMENT, asyncHandler(async (req, res) => {
+    const data = await commentService.sendReactionComment(req.body)
+    
+    return res.json(data)
+}))
+
 commentRouter.post(ENDPONTAPI.GET_COMMENT, asyncHandler(async (req, res) => {
     const {idTopic, limit = 10, skip = 0} = req.query
     const data = await commentService.getCommentsByIdTopic({

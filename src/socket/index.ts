@@ -36,3 +36,7 @@ export function initSocket(srv: Server) {
 export const sendCommentSocket = (props: { comment: Comment }) => {
     io.sockets.in(`comment_room_${props.comment.idTopic}`).emit('send-comment', props);
 }
+
+export const updateCommentSocket = (props: { comment: Comment }) => {
+    io.sockets.in(`comment_room_${props.comment.idTopic}`).emit('update-comment', props);
+}
