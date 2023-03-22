@@ -69,7 +69,7 @@ export default class CommentService {
           .skip(skip)
           .limit(limit)
           .populate("idUser")
-          .sort({ "index": 1 }),
+          .sort({ "createDate": -1 }),
         CommentModel.countDocuments({
           idTopic,
           status: TTCSconfig.STATUS_PUBLIC
