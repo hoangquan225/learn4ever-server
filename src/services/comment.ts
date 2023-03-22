@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { BadRequestError } from "../common/errors";
 import { CommentModel } from "../database/comment";
 import { userTableName } from "../database/users";
-import { sendCommentSocket, updateCommentSocket } from "../socket";
+import { deleteCommentSocket, sendCommentSocket, updateCommentSocket } from "../socket";
 import TTCSconfig from "../submodule/common/config";
 import { Comment } from "../submodule/models/comment";
 
@@ -118,6 +118,17 @@ export default class CommentService {
     } catch (error) {
       console.log(error);
       
+      throw new BadRequestError();
+    }
+  }
+
+  deleteComment =async (body : {idComment: string, idTopic: string, realTime?: boolean }) => {
+    const { idComment, realTime = true, idTopic } = body;
+    try {
+      const deleteCount = CommentModel.deleteOne({_id: idComment});
+      realTime && deleteCommentSocket({ id: idComment, idTopic });
+      return deleteCount
+    } catch (error) {
       throw new BadRequestError();
     }
   }

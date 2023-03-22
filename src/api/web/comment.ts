@@ -12,6 +12,12 @@ commentRouter.post(ENDPONTAPI.UPDATE_COMMENT, asyncHandler(async (req, res) => {
     return res.json(data)
 }))
 
+commentRouter.post(ENDPONTAPI.DELETE_COMMENT, asyncHandler(async (req, res) => {
+    const data = await commentService.deleteComment(req.body)
+    
+    return res.json(data)
+}))
+
 commentRouter.post(ENDPONTAPI.SEND_REACTION_COMMENT, asyncHandler(async (req, res) => {
     const data = await commentService.sendReactionComment(req.body)
     

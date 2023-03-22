@@ -40,3 +40,7 @@ export const sendCommentSocket = (props: { comment: Comment }) => {
 export const updateCommentSocket = (props: { comment: Comment }) => {
     io.sockets.in(`comment_room_${props.comment.idTopic}`).emit('update-comment', props);
 }
+
+export const deleteCommentSocket = (props: { id: String, idTopic: string }) => {
+    io.sockets.in(`comment_room_${props.idTopic}`).emit('delete-comment', props);
+}
