@@ -25,6 +25,16 @@ export default class QuestionService {
             throw new BadRequestError();
         }
     }
+
+    deletetQuestions = async (body: { id: string }) => {
+        try {
+            const deleteQuestions = await QuestionModel.deleteOne({ _id: body.id })
+            return deleteQuestions
+        } catch (error) {
+            throw new BadRequestError();
+        }
+    }
+
     // update and create
     updateQuestion = async (body: Question): Promise<{
         data: Question | string,

@@ -117,7 +117,6 @@ export default class CommentService {
       }
     } catch (error) {
       console.log(error);
-      
       throw new BadRequestError();
     }
   }
