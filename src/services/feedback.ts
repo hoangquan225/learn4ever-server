@@ -11,6 +11,7 @@ export default class FeedbackService {
         try {
             const { limit, skip } = body;
             const feedbacks = await FeedbackModel.find({ status: { $exists: true, $ne: -1 } })
+            .sort({"createDate" : -1})
             .skip(skip)
             .limit(limit)
             .populate('idUser')
