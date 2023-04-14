@@ -122,7 +122,7 @@ export default class UserService {
         try {
             // get use 
             const user = await UserModel.findOne({_id: idUser})
-            if (user) {
+            if (user && idCourse) {
                 const userInfo = new UserInfo(user)
                 // let newProgress = userInfo.progress
 
@@ -133,7 +133,6 @@ export default class UserService {
                     const progress = newProgress[idCourse].findIndex(o => o.idTopic == idTopic)
                     if(progress !== undefined && progress !== -1) {
                         newProgress[idCourse].splice(progress, 1)
-                        console.log(newProgress[idCourse]);
                     }
                     newProgress[idCourse] = [...(newProgress[idCourse] || []), {
                         status,
@@ -181,8 +180,8 @@ export default class UserService {
         try {
             const topics = await TopicModel.find({idCourse, status: TTCSconfig.STATUS_PUBLIC})
             const user = await UserModel.findOne({_id: idUser})
-            const progress = { ...user?.progress }
-            const res = topics.filter((o1) => progress[idCourse].some((o2) => o2.idTopic.toString() === o1._id.toString() && o1.type === 1)).length;
+            const progress = { ...user?.progress }[idCourse]
+            const res = topics.filter((o1) => progress && progress.some((o2) => o2.idTopic.toString() === o1._id.toString() && o1.type === 1)).length;
             return {
                 totalLearned: res,
                 status: TTCSconfig.STATUS_SUCCESS
