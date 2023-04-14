@@ -42,7 +42,6 @@ const TopicSchema = new mongoose.Schema<TopicDoc, ITopicSchema>(
     },
     {
         versionKey: false,
-        timestamps: true,
     }
 );
 

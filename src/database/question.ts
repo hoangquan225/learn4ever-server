@@ -42,7 +42,6 @@ const QuestionSchema = new mongoose.Schema<QuestionDoc, IQuestionSchema>(
     },
     {
         versionKey: false,
-        timestamps: true,
     }
 );
 

@@ -35,7 +35,6 @@ const FeedbackSchema = new mongoose.Schema<FeedbackDoc, IFeedbackSchema>(
     },
     {
         versionKey: false,
-        timestamps: true,
     }
 );
 

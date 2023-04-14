@@ -17,20 +17,23 @@ const UserSchema = new mongoose.Schema<UserInfoDoc, IUserSchema>(
         email: String,
         password: String,
         classNumber: Number,
-        progess: [{
-            idTopic: {
-                type: mongoose.Types.ObjectId, 
-                ref: "Topic"
-            },
-            status: Number,
-            timeStudy: Number,
-            score: Number,
-            correctQuestion: Number,
-            answers: [{
-                idQuestion : String, 
-                idAnswer: String
-            }]
-        }],
+        progress: {
+            type: Object,
+            of: new mongoose.Schema({
+                idTopic: {
+                    type: mongoose.Types.ObjectId, 
+                    ref: "Topic"        
+                },
+                status: Number,
+                timeStudy: Number,
+                score: Number,
+                correctQuestion: Number,
+                answers: [{
+                    idQuestion : String, 
+                    idAnswer: String
+                }]
+            }),
+        } ,
         phoneNumber: { type: String, default: '' },
         address: { type: String, default: '' },
         facebookId: { type: String, default: '' },

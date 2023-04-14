@@ -30,7 +30,6 @@ const CommentSchema = new mongoose.Schema<CommentDoc, ICommentSchema>(
     },
     {
         versionKey: false,
-        timestamps: true,
     }
 );
 

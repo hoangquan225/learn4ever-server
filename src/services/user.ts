@@ -107,6 +107,7 @@ export default class UserService {
 
     updateStudyedForUser = async (body: {
         idTopic: string,
+        idCourse: string,
         idUser: string,
         status: number,
         timeStudy: number,
@@ -117,28 +118,45 @@ export default class UserService {
             idAnswer: string
         }>
     }) => {
-        const { idTopic, idUser, status, timeStudy, score, correctQuestion, answers } = body
+        const { idTopic, idUser, status, timeStudy, score, correctQuestion, answers, idCourse } = body
         try {
             // get use 
             const user = await UserModel.findOne({_id: idUser})
             if (user) {
                 const userInfo = new UserInfo(user)
-                let newProgress = userInfo.progess
-                const progress = newProgress?.findIndex(o => o.idTopic == idTopic)
-                if(progress !== undefined && progress !== -1) {
-                    newProgress?.splice(progress, 1)
+                // let newProgress = userInfo.progress
+
+                const newProgress = { ...userInfo.progress }
+                const courseProgress = newProgress[idCourse]
+
+                if (courseProgress) {
+                    const progress = newProgress[idCourse].findIndex(o => o.idTopic == idTopic)
+                    if(progress !== undefined && progress !== -1) {
+                        newProgress[idCourse].splice(progress, 1)
+                        console.log(newProgress[idCourse]);
+                    }
+                    newProgress[idCourse] = [...(newProgress[idCourse] || []), {
+                        status,
+                        idTopic,
+                        timeStudy,
+                        score,
+                        correctQuestion,
+                        answers,
+                    }]
+                }else {
+                    newProgress[idCourse] = [{
+                        status,
+                        idTopic,
+                        timeStudy,
+                        score,
+                        correctQuestion,
+                        answers,
+                    }]
                 }
                 
                 const res = await UserModel.findOneAndUpdate(
                     { _id: idUser }, 
-                    { $set: { progess: [...(newProgress || []), {
-                        status, 
-                        idTopic, 
-                        timeStudy,
-                        score,
-                        correctQuestion,
-                        answers
-                    }] }}, 
+                    { $set: { progress: newProgress } }, 
                     { new: true }
                 )
                 return {
@@ -163,7 +181,8 @@ export default class UserService {
         try {
             const topics = await TopicModel.find({idCourse, status: TTCSconfig.STATUS_PUBLIC})
             const user = await UserModel.findOne({_id: idUser})
-            const res = topics.filter((o1) => user?.progess?.some((o2) => o2.idTopic.toString() === o1._id.toString() && o1.type === 1)).length;
+            const progress = { ...user?.progress }
+            const res = topics.filter((o1) => progress[idCourse].some((o2) => o2.idTopic.toString() === o1._id.toString() && o1.type === 1)).length;
             return {
                 totalLearned: res,
                 status: TTCSconfig.STATUS_SUCCESS
