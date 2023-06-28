@@ -17,23 +17,28 @@ export default class CategoryService {
     }
   };
 
-  getCategorysBySlug = async (body: { slug: string }) => {
+  getCategorysBySlug = async (body: {
+    slug: string,
+    status?: boolean,
+    returnCategory?: boolean
+  }) => {
     try {
-      let status = TTCSconfig.STATUS_SUCCESS;
+      const { status = TTCSconfig.STATUS_PUBLIC, returnCategory = true } = body
       const categorys = await CategoryModel.findOne({
         slug: body.slug,
         status: TTCSconfig.STATUS_PUBLIC,
       });
+      if(!categorys) return {
+        status: TTCSconfig.STATUS_FAIL,
+        data: null
+      }
       const course = await CourseModel.find({ idCategory: categorys?.id });
-      categorys
-        ? (status = TTCSconfig.STATUS_SUCCESS)
-        : (status = TTCSconfig.RESPONSIVE_NULL);
       return {
-        data: {
+        data: returnCategory ? {
           categorys,
           course,
-        },
-        status,
+        } : { course },
+        status: TTCSconfig.STATUS_SUCCESS,
       };
     } catch (error) {
       throw new BadRequestError();
