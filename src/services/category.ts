@@ -20,10 +20,11 @@ export default class CategoryService {
   getCategorysBySlug = async (body: {
     slug: string,
     status?: boolean,
-    returnCategory?: boolean
+    returnCategory?: boolean,
+    isMobile?: boolean
   }) => {
     try {
-      const { status = TTCSconfig.STATUS_PUBLIC, returnCategory = true } = body
+      const { status = TTCSconfig.STATUS_PUBLIC, returnCategory = true, isMobile = false } = body
       const categorys = await CategoryModel.findOne({
         slug: body.slug,
         status: TTCSconfig.STATUS_PUBLIC,
@@ -33,7 +34,12 @@ export default class CategoryService {
         data: null
       }
       const course = await CourseModel.find({ idCategory: categorys?.id });
-      return {
+      return isMobile
+      ? {
+        course,
+        status: TTCSconfig.STATUS_SUCCESS,
+      }
+      :{
         data: returnCategory ? {
           categorys,
           course,

@@ -7,7 +7,7 @@ import logger from './src/utils/logger';
 import connectDatabase from './src/utils/mongodb';
 import { webRouters } from './src/routes/index';
 import { initSocket } from './src/socket';
-import { mobileRouters } from './src/api/mobile/index';
+import { RouterMobile } from './src/api/mobile';
 // import { initSocket } from './src/sockets';
 // import discordApp from './src/discord/modules/discord'
 const PREFIX_API = "/api"
@@ -42,7 +42,7 @@ class App {
         // Web
         this.app.use(PREFIX_API, webRouters);
         // mobile 
-        this.app.use("/api-mobile", mobileRouters)
+        this.app.use("/api-mobile", RouterMobile);
     }
     run() {
         connectDatabase(() => {
