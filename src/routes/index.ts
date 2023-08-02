@@ -26,6 +26,6 @@ router.use(topicRouter);
 router.use(uploadRouter);
 router.use(feedbackRouter);
 router.use(statisticRouter);
-router.use(commentRouter)
+router.use(commentRouter);
 
 export { router as webRouters };

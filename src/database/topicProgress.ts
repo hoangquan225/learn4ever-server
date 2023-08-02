@@ -30,11 +30,13 @@ const TopicProgressSchema = new mongoose.Schema<TopicProgressDoc, ITopicProgress
         answers: [{
             idQuestion : String, 
             idAnswer: String
-        }]
+        }],
+        lastUpdate: Number,
+        createDate: Number
     },
     {
         versionKey: false,
-        timestamps: true,
+        // timestamps: true,
     }
 );
 
