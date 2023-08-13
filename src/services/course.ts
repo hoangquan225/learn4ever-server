@@ -16,7 +16,8 @@ export default class CourseService {
 
     getCourseByIdCategory = async (body: {categoryId: string}) => { 
         const courses = await CourseModel.find({
-            idCategory: body.categoryId
+            idCategory: body.categoryId,
+            status: TTCSconfig.STATUS_PUBLIC
         })
         return { 
             status: TTCSconfig.STATUS_SUCCESS,
