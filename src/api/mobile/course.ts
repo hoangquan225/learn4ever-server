@@ -17,3 +17,5 @@ router.post("/get-course-by-category-id", async_handle(async (req, res) => {
     const data = await courseServices.getCourseByIdCategory(req.body)
     return res.json(data)
 }))
+
+export {router as routerCourseMobile}
