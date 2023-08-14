@@ -17,7 +17,7 @@ export default class TopicService {
     getTopicById = async (body: { id: string }) => {
         try {
             const topic = await TopicModel.findOne({ _id: body.id }).populate('topicChild').populate({
-                path: "timePracticeInVideo", 
+                path: "timePracticeInVideo",
                 populate: "idQuestion"
             })
             return new Topic(topic)
@@ -33,7 +33,7 @@ export default class TopicService {
         status: number
     }) => {
         try {
-            if(body.status) {
+            if (body.status) {
                 const data = await TopicModel.find({
                     idCourse: body.idCourse,
                     parentId: body.parentId,
@@ -42,14 +42,14 @@ export default class TopicService {
                 }).populate('topicChild')
                 let total = 0
                 data.forEach(o => {
-                    o.topicChild.map(c => new Topic(c).status === body.status &&  total++)
+                    o.topicChild.map(c => new Topic(c).status === body.status && total++)
                 })
                 return {
                     data: data.map(o => new Topic(o)),
                     total,
                     status: TTCSconfig.STATUS_SUCCESS
                 }
-            }else{
+            } else {
                 const data = await TopicModel.find({
                     idCourse: body.idCourse,
                     parentId: body.parentId,
@@ -57,8 +57,8 @@ export default class TopicService {
                 }).populate('topicChild')
                 let total = 0
                 data.forEach(o => {
-                    o.topicChild.map(c => new Topic(c).status === body.status &&  total++)
-                }) 
+                    o.topicChild.map(c => new Topic(c).status === body.status && total++)
+                })
                 return {
                     data: data.map(o => new Topic(o)),
                     total,
@@ -195,5 +195,37 @@ export default class TopicService {
         } catch (error) {
             throw new BadRequestError();
         }
+    }
+
+    countTopicInCourse = async (body: { courseId: string }) => {
+        const { courseId } = body
+
+        const [totalLearn, totalExam] = await Promise.all([
+            TopicModel.countDocuments({
+                idCourse: courseId,
+                topicChild: {
+                    $size: 0
+                },
+                status: TTCSconfig.STATUS_PUBLIC,
+                type: TTCSconfig.TYPE_LESSON
+            }),
+            TopicModel.countDocuments({
+                idCourse: courseId,
+                topicChild: {
+                    $size: 0
+                },
+                status: TTCSconfig.STATUS_PUBLIC,
+                type: TTCSconfig.TYPE_EXAM
+            })
+        ])
+
+        return {
+            data: {
+                totalLearn,
+                totalExam,
+            },
+            status: TTCSconfig.STATUS_SUCCESS
+        }
+
     }
 }
