@@ -8,7 +8,7 @@ const router = Router();
 const courseServices = new CourseService();
 const topicServices = new TopicService();
 
-router.post("/get-course-by-category-id", async_handle(async (req, res) => {
+router.post("/get-list-course-by-category-id", async_handle(async (req, res) => {
     if (!req.body.categoryId) {
         return res.json({
             data: null,
