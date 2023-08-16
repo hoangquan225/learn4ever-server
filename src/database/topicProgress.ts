@@ -2,6 +2,7 @@ import mongoose, { Model, model } from "mongoose";
 import { TopicProgress } from "../submodule/models/topicProgress";
 import { userTableName } from "./users";
 import { topicTable } from "./topic";
+import TTCSconfig from "../submodule/common/config";
 
 export const topicProgressTable = "TopicProgress";
 
@@ -23,7 +24,10 @@ const TopicProgressSchema = new mongoose.Schema<TopicProgressDoc, ITopicProgress
             type: mongoose.Types.ObjectId, 
             ref: userTableName
         },  
-        status: Number,
+        status: {
+            type: Number, 
+            default: TTCSconfig.STATUS_LEARN_NONE
+        },
         timeStudy: Number,
         score: Number,
         correctQuestion: Number,
