@@ -26,7 +26,7 @@ router.post("/get-course-by-id", async_handle(async (req, res) => {
             status: TTCSconfig.STATUS_FAIL
         })
     }
-    const data = await courseServices.getCourseById({ id: req.body.id })
+    const data = await courseServices.getCourseById({ id: req.body.courseId })
     return res.json({
         status: TTCSconfig.STATUS_SUCCESS,
         data

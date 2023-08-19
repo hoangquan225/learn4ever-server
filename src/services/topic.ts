@@ -63,7 +63,12 @@ export default class TopicService {
                 status: number,
                 topicChildIds?: string[]
             } = {
-                data: data.map(o => new Topic(o)),
+                data: data.map(o => {
+                    const topic = new Topic(o)
+                    topic.topicChildData = topic.topicChildData.filter(child => child.status === body.status)
+                    topic.topicChild = topic.topicChildData.map(child => child.id || "")
+                    return topic
+                }),
                 total,
                 status: TTCSconfig.STATUS_SUCCESS
             }

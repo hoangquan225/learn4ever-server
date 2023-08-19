@@ -38,10 +38,10 @@ router.post("/load-question-by-topic-id", async_handle(async (req, res) => {
         status: 1,
         idTopic: topicId
     })
-    return { 
+    return res.json({ 
         status: TTCSconfig.STATUS_SUCCESS,
         data
-    }
+    })
 }))
 
 export { router as TopicRouterMobile };

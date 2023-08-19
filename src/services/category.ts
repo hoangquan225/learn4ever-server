@@ -17,6 +17,28 @@ export default class CategoryService {
     }
   };
 
+  getCategoryById = async (body: { id: string }) => {
+    try {
+      const category = await CategoryModel.findOne({
+        id: body.id
+      });
+      if (!category) return {
+        data: null,
+        status: TTCSconfig.STATUS_FAIL
+      }
+      return {
+        status: TTCSconfig.STATUS_SUCCESS,
+        data: category
+      }
+    } catch (error) {
+      console.log(error);
+      return {
+        data: null,
+        status: TTCSconfig.STATUS_FAIL
+      }
+    }
+  }
+
   getCategorysBySlug = async (body: {
     slug: string,
     status?: boolean,
@@ -29,23 +51,23 @@ export default class CategoryService {
         slug: body.slug,
         status: TTCSconfig.STATUS_PUBLIC,
       });
-      if(!categorys) return {
+      if (!categorys) return {
         status: TTCSconfig.STATUS_FAIL,
         data: null
       }
       const course = await CourseModel.find({ idCategory: categorys?.id });
       return isMobile
-      ? {
-        course,
-        status: TTCSconfig.STATUS_SUCCESS,
-      }
-      :{
-        data: returnCategory ? {
-          categorys,
+        ? {
           course,
-        } : { course },
-        status: TTCSconfig.STATUS_SUCCESS,
-      };
+          status: TTCSconfig.STATUS_SUCCESS,
+        }
+        : {
+          data: returnCategory ? {
+            categorys,
+            course,
+          } : { course },
+          status: TTCSconfig.STATUS_SUCCESS,
+        };
     } catch (error) {
       throw new BadRequestError();
     }
