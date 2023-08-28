@@ -25,6 +25,10 @@ export default class UserService {
         userInfo: UserInfo | null,
     }> => {
         const tokenDecode = jwtDecodeToken(body.token);
+        if (!tokenDecode || typeof tokenDecode === "string") return {
+            status: TTCSconfig.STATUS_FAIL,
+            userInfo: null
+        }
         let userInfo = new UserInfo(body.userInfo)
         let status = TTCSconfig.STATUS_SUCCESS;
 
@@ -50,6 +54,10 @@ export default class UserService {
         userInfo: UserInfo | null,
     }> => {
         const tokenDecode = jwtDecodeToken(token);
+        if (!tokenDecode || typeof tokenDecode === "string") return {
+            status: TTCSconfig.STATUS_FAIL,
+            userInfo: null
+        }
         let status = TTCSconfig.STATUS_SUCCESS;
         // find db 
         try {
@@ -72,6 +80,7 @@ export default class UserService {
     changePassword = async (body: { token: string, password: string, newPassword: string }): Promise<UserInfo> => {
         const { newPassword, token, password } = body;
         const tokenDecode = jwtDecodeToken(token);
+        if (!tokenDecode || typeof tokenDecode === "string") throw new BadRequestError();
 
         let userInfo = new UserInfo();
         try {
@@ -113,36 +122,40 @@ export default class UserService {
         score: number,
         correctQuestion: number,
         answers: Array<{
-            idQuestion : string, 
+            idQuestion: string,
             idAnswer: string
         }>
     }) => {
         const { idTopic, idUser, status, timeStudy, score, correctQuestion, answers } = body
         try {
             // get use 
-            const user = await UserModel.findOne({_id: idUser})
+            const user = await UserModel.findOne({ _id: idUser })
             if (user) {
                 const userInfo = new UserInfo(user)
                 let newProgress = userInfo.progess
                 const progress = newProgress?.findIndex(o => o.idTopic == idTopic)
-                if(progress !== undefined && progress !== -1) {
+                if (progress !== undefined && progress !== -1) {
                     newProgress?.splice(progress, 1)
                 }
-                
+
                 const res = await UserModel.findOneAndUpdate(
-                    { _id: idUser }, 
-                    { $set: { progess: [...(newProgress || []), {
-                        status, 
-                        idTopic, 
-                        timeStudy,
-                        score,
-                        correctQuestion,
-                        answers
-                    }] }}, 
+                    { _id: idUser },
+                    {
+                        $set: {
+                            progess: [...(newProgress || []), {
+                                status,
+                                idTopic,
+                                timeStudy,
+                                score,
+                                correctQuestion,
+                                answers
+                            }]
+                        }
+                    },
                     { new: true }
                 )
                 return {
-                    data: res, 
+                    data: res,
                     status: TTCSconfig.STATUS_SUCCESS
                 }
             } else {
@@ -161,8 +174,8 @@ export default class UserService {
     }) => {
         const { idCourse, idUser } = body
         try {
-            const topics = await TopicModel.find({idCourse, status: TTCSconfig.STATUS_PUBLIC})
-            const user = await UserModel.findOne({_id: idUser})
+            const topics = await TopicModel.find({ idCourse, status: TTCSconfig.STATUS_PUBLIC })
+            const user = await UserModel.findOne({ _id: idUser })
             const res = topics.filter((o1) => user?.progess?.some((o2) => o2.idTopic.toString() === o1._id.toString() && o1.type === 1)).length;
             return {
                 totalLearned: res,

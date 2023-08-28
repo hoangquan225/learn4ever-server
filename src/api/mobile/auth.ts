@@ -6,14 +6,14 @@ import TTCSconfig from "../../submodule/common/config";
 import { jwtDecodeToken, jwtEncode } from "../../utils/jwtToken";
 import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import { BadRequestError } from "../../common/errors";
+import { UserInfo } from "../../submodule/models/user";
 
 const router = Router();
 
 router.post("/login", async_handle(async (req, res) => {
     const { account, password } = req.body
 
-
-    const user = await UserModel.findOne({ account })
+    const user = await UserModel.findOne({ account, status: TTCSconfig.STATUS_PUBLIC })
     if (!user) {
         return res.status(200).json({
             status: TTCSconfig.STATUS_FAIL,
@@ -30,6 +30,7 @@ router.post("/login", async_handle(async (req, res) => {
         })
     }
     const token = jwtEncode(user._id, 60 * 60 * 24 * 30);
+    await UserModel.findByIdAndUpdate(user._id, { $set: { lastLogin: Date.now() } })
 
     return res.json({
         status: TTCSconfig.STATUS_SUCCESS,
@@ -52,6 +53,34 @@ router.post("/session", async_handle(async (req, res) => {
         }
         throw new BadRequestError();
     }
+}))
+
+router.post("/register", async_handle(async (req, res) => {
+    const { account, password, email, phoneNumber, gender, reTypePassword } = req.body as Partial<UserInfo> & { reTypePassword: string }
+    if (!account || !password || !email || !phoneNumber || !gender || !reTypePassword) {
+        return res.status(400).json("params is not valid")
+    }
+    if (reTypePassword !== password) return res.status(400).json("params is not valid")
+
+    const isExistUser = await UserModel.exists({
+        $or: [
+            { account },
+            { email }
+        ]
+    })
+    if (isExistUser) return res.status(200).json({
+        status: TTCSconfig.LOGIN_ACCOUNT_IS_USED,
+        data: null
+    })
+    const registerUser = await UserModel.create({
+        ...req.body,
+        password: encodeSHA256Pass(account, password),
+        registerDate: Date.now()
+    })
+    return res.json({
+        status: TTCSconfig.STATUS_SUCCESS,
+        data: registerUser
+    })
 }))
 
 export { router as authRouter }
