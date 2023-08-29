@@ -56,11 +56,11 @@ router.post("/session", async_handle(async (req, res) => {
 }))
 
 router.post("/register", async_handle(async (req, res) => {
-    const { account, password, email, phoneNumber, gender, reTypePassword } = req.body as Partial<UserInfo> & { reTypePassword: string }
-    if (!account || !password || !email || !phoneNumber || !gender || !reTypePassword) {
+    const { account, password, email, phoneNumber, gender, reTypePassword, name } = req.body as Partial<UserInfo> & { reTypePassword?: string }
+    if (!account || !password || !email || !phoneNumber || !gender || !name) {
         return res.status(400).json("params is not valid")
     }
-    if (reTypePassword !== password) return res.status(400).json("params is not valid")
+    if (reTypePassword && reTypePassword !== password) return res.status(400).json("params is not valid")
 
     const isExistUser = await UserModel.exists({
         $or: [
@@ -70,16 +70,17 @@ router.post("/register", async_handle(async (req, res) => {
     })
     if (isExistUser) return res.status(200).json({
         status: TTCSconfig.LOGIN_ACCOUNT_IS_USED,
-        data: null
+        token: null
     })
     const registerUser = await UserModel.create({
         ...req.body,
         password: encodeSHA256Pass(account, password),
         registerDate: Date.now()
     })
+    const token = jwtEncode(registerUser._id, 60 * 60 * 24 * 30);
     return res.json({
         status: TTCSconfig.STATUS_SUCCESS,
-        data: registerUser
+        token
     })
 }))
 
