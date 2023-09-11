@@ -1,3 +1,4 @@
+import { Mongoose, Types } from "mongoose";
 import { BadRequestError } from "../common/errors";
 import { TopicModel } from "../database/topic";
 import TTCSconfig from "../submodule/common/config";
@@ -35,7 +36,7 @@ export default class TopicService {
     }) => {
         try {
             const match = {
-                idCourse: body.idCourse,
+                idCourse: new Types.ObjectId(body.idCourse),
                 parentId: body.parentId,
                 type: body.type,
             }
