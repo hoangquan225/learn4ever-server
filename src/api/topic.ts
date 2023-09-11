@@ -35,6 +35,7 @@ topicRouter.post(Endpoint.GET_TOPIC_BY_COURSE, asyncHandler(async (req, res) => 
         parentId: req.query.parentId ? `${req.query.parentId}` : null,
         status:  Number(req.query.status)
     })
+    console.log("responsive :" , data);
     return res.json(data)
 }))
 
