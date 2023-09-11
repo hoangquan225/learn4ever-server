@@ -19,6 +19,11 @@ router.post("/get-list-topic-by-courseId", async_handle(async (req, res) => {
         type,
         parentId: null
     })
+    console.log({
+        ..._.omit(data, ["total"]),
+        topicChildData: data.data.reduce((topicChild, topic) => [...topicChild, ...topic.topicChildData.map(o => new Topic(o))] , [] as Topic[])
+    });
+    
     return res.json({
         ..._.omit(data, ["total"]),
         topicChildData: data.data.reduce((topicChild, topic) => [...topicChild, ...topic.topicChildData.map(o => new Topic(o))] , [] as Topic[])
