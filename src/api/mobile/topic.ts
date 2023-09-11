@@ -21,6 +21,8 @@ router.post("/get-list-topic-by-courseId", async_handle(async (req, res) => {
         type,
         parentId: null
     })
+    console.log(_.omit(data, ["total"]));
+    
     return res.json(_.omit(data, ["total"]))
 }))
 
