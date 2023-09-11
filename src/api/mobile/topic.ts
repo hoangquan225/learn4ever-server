@@ -4,6 +4,7 @@ import TopicService from "../../services/topic";
 import TTCSconfig from "../../submodule/common/config";
 import async_handle from "../../utils/async_handle";
 import QuestionService from "../../services/question";
+import { Topic } from "../../submodule/models/topic";
 
 const router = Router();
 const topicServices = new TopicService();
@@ -18,7 +19,10 @@ router.post("/get-list-topic-by-courseId", async_handle(async (req, res) => {
         type,
         parentId: null
     })
-    return res.json(_.omit(data, ["total"]))
+    return res.json({
+        ..._.omit(data, ["total"]),
+        topicChildData: data.data.reduce((topicChild, topic) => [...topicChild, ...topic.topicChildData] , [] as Topic[])
+    })
 }))
 
 router.post("/get-topic-by-id", async_handle(async (req, res) => {
