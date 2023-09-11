@@ -27,6 +27,8 @@ topicRouter.post(Endpoint.UPDATE_TOPIC, asyncHandler(async (req, res) => {
 }))
 
 topicRouter.post(Endpoint.GET_TOPIC_BY_COURSE, asyncHandler(async (req, res) => {
+    console.log(req.query);
+    
     const data = await topicService.getTopicsByCourse({
         idCourse: `${req.query.idCourse}`,
         type: Number(req.query.type),

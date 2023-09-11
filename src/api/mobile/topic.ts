@@ -11,6 +11,10 @@ const questionServices = new QuestionService();
 
 router.post("/get-list-topic-by-courseId", async_handle(async (req, res) => {
     const { courseId, status, type } = req.body
+    console.log({
+        courseId, status, type
+    });
+
     const data = await topicServices.getTopicsByCourse({
         idCourse: courseId,
         status,
@@ -38,7 +42,7 @@ router.post("/load-question-by-topic-id", async_handle(async (req, res) => {
         status: 1,
         idTopic: topicId
     })
-    return res.json({ 
+    return res.json({
         status: TTCSconfig.STATUS_SUCCESS,
         data
     })
