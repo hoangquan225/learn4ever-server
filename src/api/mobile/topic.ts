@@ -11,9 +11,6 @@ const questionServices = new QuestionService();
 
 router.post("/get-list-topic-by-courseId", async_handle(async (req, res) => {
     const { courseId, status, type } = req.body
-    console.log({
-        courseId, status, type
-    });
 
     const data = await topicServices.getTopicsByCourse({
         idCourse: courseId,
@@ -21,8 +18,6 @@ router.post("/get-list-topic-by-courseId", async_handle(async (req, res) => {
         type,
         parentId: null
     })
-    console.log(_.omit(data, ["total"]));
-    
     return res.json(_.omit(data, ["total"]))
 }))
 
