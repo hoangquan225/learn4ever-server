@@ -31,7 +31,7 @@ router.post("/login", async_handle(async (req, res) => {
             token: "1" // sai password
         })
     }
-    const token = jwtEncode(user._id, 60 * 60 * 24 * 30);
+    const token = jwtEncode(user._id);
     await UserModel.findByIdAndUpdate(user._id, { $set: { lastLogin: Date.now() } })
 
     return res.json({
@@ -66,7 +66,7 @@ router.post("/register", async_handle(async (req, res) => {
         password: encodeSHA256Pass(account, password),
         registerDate: Date.now()
     })
-    const token = jwtEncode(registerUser._id, 60 * 60 * 24 * 30);
+    const token = jwtEncode(registerUser._id);
     return res.json({
         status: TTCSconfig.STATUS_SUCCESS,
         token
@@ -78,6 +78,26 @@ router.post("/user", jwtMiddleware, async_handle(async (req, res) => {
     const user = await UserModel.findOne({ _id });
 
     return res.json(user)
+}))
+
+router.post("/update-user", async_handle(async (req, res) => {
+    const { _id, password, ...updateFeild } = req.body;
+    let _password: string | null = "";
+    const user = await UserModel.findOne({ _id })
+    if (!user) return res.json({ status: TTCSconfig.STATUS_NO_EXIST })
+
+    if (password) {
+        _password = encodeSHA256Pass(user.account, password)
+        if (!_password) return res.json({ status: TTCSconfig.STATUS_FAIL })
+        Object.assign(updateFeild, { password: _password })
+    }
+    await UserModel.findOneAndUpdate(
+        { _id },
+        { $set: { ...updateFeild } },
+    )
+    return res.json({
+        status: TTCSconfig.STATUS_SUCCESS
+    })
 }))
 
 export { router as authRouter }
