@@ -13,16 +13,40 @@ const questionServices = new QuestionService();
 
 router.post("/get-list-topic-by-courseId", async_handle(async (req, res) => {
     const { courseId, status, type } = req.body
-    
+
     const match = {
         idCourse: courseId,
-        type, 
+        type,
         status,
         parentId: null
     }
-    const data = await TopicModel.find(match).populate('topicChild')
+    const data = await TopicModel
+        .aggregate([
+            {
+                $match: match
+            },
+            {
+                $lookup: {
+                    from: 'topics',
+                    let: { parentId: '$_id' },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ['$parentId', '$$parentId'] },
+                                        { $eq: ["$status", status] }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: 'topicChildData'
+                }
+            }
+        ])
     console.log(data);
-    
+
     // console.log({
     //     status: 0, 
     //     data: data.map((o : any) => ({ 
@@ -31,14 +55,10 @@ router.post("/get-list-topic-by-courseId", async_handle(async (req, res) => {
     //         topicChild: o.topicChild.filter((topic: any) => topic["_doc"].status === status).map(topic => topic["_doc"]._id || "")
     //     }))
     // });
-    
+
     return res.json({
-        status: 0, 
-        data: data.map((o : any) => ({ 
-            ...o["_doc"], 
-            topicChildData: o.topicChild.filter((topic: any) => topic["_doc"].status === status).map(topic => ({...topic["_doc"]})), 
-            topicChild: o.topicChild.filter((topic: any) => topic["_doc"].status === status).map(topic => topic["_doc"]._id || "")
-        }))
+        status: 0,
+        data
     })
 }))
 
