@@ -5,6 +5,7 @@ import TTCSconfig from "../../submodule/common/config";
 import async_handle from "../../utils/async_handle";
 import QuestionService from "../../services/question";
 import { Topic } from "../../submodule/models/topic";
+import { TopicModel } from "../../database/topic";
 
 const router = Router();
 const topicServices = new TopicService();
@@ -12,21 +13,30 @@ const questionServices = new QuestionService();
 
 router.post("/get-list-topic-by-courseId", async_handle(async (req, res) => {
     const { courseId, status, type } = req.body
-
-    const data = await topicServices.getTopicsByCourse({
+    
+    const match = {
         idCourse: courseId,
+        type, 
         status,
-        type,
         parentId: null
-    })
+    }
+    const data = await TopicModel.find(match).populate('topicChild')
     console.log({
-        ..._.omit(data, ["total"]),
-        topicChildData: data.data.reduce((topicChild, topic) => [...topicChild, ...topic.topicChildData.map(o => new Topic(o))] , [] as Topic[])
+        status: 0, 
+        data: data.map((o : any) => ({ 
+            ...o["_doc"], 
+            topicChildData: o.topicChild.filter((topic: any) => topic["_doc"].status === status).map(topic => ({...topic["_doc"]})), 
+            topicChild: o.topicChild.filter((topic: any) => topic["_doc"].status === status).map(topic => topic["_doc"]._id || "")
+        }))
     });
     
     return res.json({
-        ..._.omit(data, ["total"]),
-        topicChildData: data.data.reduce((topicChild, topic) => [...topicChild, ...topic.topicChildData.map(o => new Topic(o))] , [] as Topic[])
+        status: 0, 
+        data: data.map((o : any) => ({ 
+            ...o["_doc"], 
+            topicChildData: o.topicChild.filter((topic: any) => topic["_doc"].status === status).map(topic => ({...topic["_doc"]})), 
+            topicChild: o.topicChild.filter((topic: any) => topic["_doc"].status === status).map(topic => topic["_doc"]._id || "")
+        }))
     })
 }))
 
