@@ -21,14 +21,16 @@ router.post("/get-list-topic-by-courseId", async_handle(async (req, res) => {
         parentId: null
     }
     const data = await TopicModel.find(match).populate('topicChild')
-    console.log({
-        status: 0, 
-        data: data.map((o : any) => ({ 
-            ...o["_doc"], 
-            topicChildData: o.topicChild.filter((topic: any) => topic["_doc"].status === status).map(topic => ({...topic["_doc"]})), 
-            topicChild: o.topicChild.filter((topic: any) => topic["_doc"].status === status).map(topic => topic["_doc"]._id || "")
-        }))
-    });
+    console.log(data);
+    
+    // console.log({
+    //     status: 0, 
+    //     data: data.map((o : any) => ({ 
+    //         ...o["_doc"], 
+    //         topicChildData: o.topicChild.filter((topic: any) => topic["_doc"].status === status).map(topic => ({...topic["_doc"]})), 
+    //         topicChild: o.topicChild.filter((topic: any) => topic["_doc"].status === status).map(topic => topic["_doc"]._id || "")
+    //     }))
+    // });
     
     return res.json({
         status: 0, 
