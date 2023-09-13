@@ -17,34 +17,9 @@ router.post("/get-list-topic-by-courseId", async_handle(async (req, res) => {
     const match = {
         idCourse: courseId,
         type,
-        status,
-        parentId: null
+        status
     }
-    const data = await TopicModel
-        .aggregate([
-            {
-                $match: match
-            },
-            {
-                $lookup: {
-                    from: 'topics',
-                    let: { parentId: '$_id' },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        { $eq: ['$parentId', '$$parentId'] },
-                                        { $eq: ["$status", status] }
-                                    ]
-                                }
-                            }
-                        }
-                    ],
-                    as: 'topicChildData'
-                }
-            }
-        ])
+    const data = await TopicModel.find(match)
     console.log(data);
 
     // console.log({
