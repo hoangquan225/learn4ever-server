@@ -6,6 +6,8 @@ import async_handle from "../../utils/async_handle";
 import QuestionService from "../../services/question";
 import { Topic } from "../../submodule/models/topic";
 import { TopicModel } from "../../database/topic";
+import { QuestionModel } from "../../database/question";
+import { Question } from "../../submodule/models/question";
 
 const router = Router();
 const topicServices = new TopicService();
@@ -21,9 +23,27 @@ router.post("/get-list-topic-by-courseId", async_handle(async (req, res) => {
     }
     const data = await TopicModel.find(match)
 
+    const newData = await Promise.all(data.map(async (_topic) => {
+        const topic = new Topic(_topic);
+        if (topic.topicType === TTCSconfig.TYPE_TOPIC_VIDEO && !!topic.timePracticeInVideo?.length) {
+            const questionIds = topic.timePracticeInVideo[0].idQuestion
+            const questionDatas = await QuestionModel.find({
+                _id: { $in: questionIds }
+            })
+            return {
+                ...topic,
+                timePracticeInVideo: [{
+                    ...topic.timePracticeInVideo[0],
+                    questionData: questionDatas.map(data => new Question(data))
+                }]
+            }
+        }
+        return topic
+    }))
+
     return res.json({
         status: 0,
-        data
+        data: newData
     })
 }))
 
