@@ -91,12 +91,16 @@ export default class CommentService {
       let comment = await CommentModel.findOne({ _id: idComment });
       if(comment) {
         let react = [...comment.react || []];
-        
         const updateComment = await CommentModel.findOneAndUpdate(
           { _id: idComment },
           {
             $set: {
-              react : react.find(o => o.idUser === idUser) ? react.filter(o => o.idUser !== idUser) : [...react, {
+              react : react.find(o => o.idUser === idUser) 
+              ? 
+              (react.find(o => o.type !== type)
+                ? [...react.filter(o => o.idUser !== idUser), { type, idUser }]
+                : react.filter(o => o.idUser !== idUser)
+              ) : [...react, {
                 type: type, 
                 idUser
               }],
