@@ -5,18 +5,29 @@ import { Course } from "../submodule/models/course";
 
 export default class CourseService {
     // get 
-    getCoursesByStatus = async (body: {status: number}): Promise<Course[]> => {
+    getCoursesByStatus = async (body: { status: number }): Promise<Course[]> => {
         try {
-            const courses = await CourseModel.find({status: body.status})
+            const courses = await CourseModel.find({ status: body.status })
             return courses
         } catch (error) {
             throw new BadRequestError();
         }
     }
 
-    getCourseById =async (body:{id: string}) => {
+    getCourseByIdCategory = async (body: { categoryId: string }) => {
+        const courses = await CourseModel.find({
+            idCategory: body.categoryId,
+            status: TTCSconfig.STATUS_PUBLIC
+        })
+        return {
+            status: TTCSconfig.STATUS_SUCCESS,
+            data: courses.map(course => new Course(course))
+        }
+    }
+
+    getCourseById = async (body: { id: string }) => {
         try {
-            const course = await CourseModel.findOne({_id : body.id})
+            const course = await CourseModel.findOne({ _id: body.id })
             return course
         } catch (error) {
             throw new BadRequestError()
@@ -24,17 +35,17 @@ export default class CourseService {
     }
 
     // get by id tag or category
-    getByIdTagAndCategory = async (body: {idCategory: string, idTag: string, status: number}): Promise<Course[]> => {
-        
+    getByIdTagAndCategory = async (body: { idCategory: string, idTag: string, status: number }): Promise<Course[]> => {
+
         try {
-            if(body.idTag !== "undefined" && body.idCategory !== "undefined") {
-                const courses = await CourseModel.find({idTag: body.idTag, idCategory: body.idCategory, status: body.status})
+            if (body.idTag !== "undefined" && body.idCategory !== "undefined") {
+                const courses = await CourseModel.find({ idTag: body.idTag, idCategory: body.idCategory, status: body.status })
                 return courses
-            }else if(body.idCategory !== "undefined") {
-                const courses = await CourseModel.find({idCategory: body.idCategory, status: body.status})
+            } else if (body.idCategory !== "undefined") {
+                const courses = await CourseModel.find({ idCategory: body.idCategory, status: body.status })
                 return courses
-            }else {
-                const courses = await CourseModel.find({idTag: body.idTag, status: body.status})
+            } else {
+                const courses = await CourseModel.find({ idTag: body.idTag, status: body.status })
                 return courses
             }
         } catch (error) {
@@ -42,18 +53,18 @@ export default class CourseService {
         }
     }
 
-    getCoursesBySlug = async (body: {slug: string, status?:number}) => {
-        const {slug, status = TTCSconfig.STATUS_PUBLIC} = body
+    getCoursesBySlug = async (body: { slug: string, status?: number }) => {
+        const { slug, status = TTCSconfig.STATUS_PUBLIC } = body
         try {
             let statusRes = TTCSconfig.STATUS_SUCCESS
             const course = await CourseModel.findOne({
-                slug, 
+                slug,
                 status
             }).populate('idCategory')
-            if(!course) statusRes = TTCSconfig.RESPONSIVE_NULL
+            if (!course) statusRes = TTCSconfig.RESPONSIVE_NULL
             return {
-                data: course? new Course(course) : null, 
-                status : statusRes
+                data: course ? new Course(course) : null,
+                status: statusRes
             }
         } catch (error) {
             throw new BadRequestError();
@@ -63,7 +74,7 @@ export default class CourseService {
     // update and create
     updateCourse = async (body: Course): Promise<{
         data: Course | string,
-        status: number 
+        status: number
     }> => {
         if (body?.id) {
             // update
@@ -78,14 +89,14 @@ export default class CourseService {
                     },
                     { new: true }
                 );
-                if(courses) {
+                if (courses) {
                     return {
-                        data: courses, 
+                        data: courses,
                         status: TTCSconfig.STATUS_SUCCESS
                     }
                 } else {
                     return {
-                        data: 'không tồn tại' , 
+                        data: 'không tồn tại',
                         status: TTCSconfig.STATUS_NO_EXIST
                     }
                 }
@@ -101,7 +112,7 @@ export default class CourseService {
                     updateDate: Date.now(),
                 })
                 return {
-                    data: newCourse, 
+                    data: newCourse,
                     status: TTCSconfig.STATUS_SUCCESS
                 }
             } catch (error) {

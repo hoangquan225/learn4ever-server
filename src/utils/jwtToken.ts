@@ -18,7 +18,7 @@ export function jwtEncode(userId: any, expiresIn = TOKEN_EXPIRED) {
 
 export function jwtDecodeToken(token: string) {
     try {
-        const decoded: any = verify(token, jwtSecret);
+        const decoded = verify(token, jwtSecret);
         return decoded;
     } catch (err) {
         return null;
