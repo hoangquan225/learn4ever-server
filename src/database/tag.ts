@@ -23,7 +23,6 @@ const TagSchema = new mongoose.Schema<TagDoc, ITagSchema>(
     },
     {
         versionKey: false,
-        timestamps: true,
     }
 );
 

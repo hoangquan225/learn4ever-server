@@ -25,7 +25,6 @@ const LessonSchema = new mongoose.Schema<LessonDoc, ILessonSchema>(
     },
     {
         versionKey: false,
-        timestamps: true,
     }
 );
 

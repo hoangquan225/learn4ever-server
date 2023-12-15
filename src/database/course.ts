@@ -32,7 +32,6 @@ const CourseSchema = new mongoose.Schema<CourseDoc, ICourseSchema>(
     },
     {
         versionKey: false,
-        timestamps: true,
     }
 );
 

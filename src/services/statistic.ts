@@ -29,7 +29,6 @@ export default class StatisticService {
     }) => {
         const { startTime, endTime } = payload
         
-        // load lượt đăng kí
         if (!endTime && startTime) {
             const valueMonth = moment(startTime)
             return [await this.loadNumByValueMonth(valueMonth)]

@@ -1,7 +1,8 @@
+import mongoose from "mongoose";
 import { BadRequestError } from "../common/errors";
 import { CommentModel } from "../database/comment";
 import { userTableName } from "../database/users";
-import { sendCommentSocket } from "../socket";
+import { deleteCommentSocket, sendCommentSocket, updateCommentSocket } from "../socket";
 import TTCSconfig from "../submodule/common/config";
 import { Comment } from "../submodule/models/comment";
 
@@ -44,7 +45,7 @@ export default class CommentService {
           ...body,
           createDate: Date.now(),
           updateDate: Date.now(),
-        }).then(res=> res.populate("idUser"));
+        }).then(res => res.populate("idUser"));
         commentData = new Comment(newComment);
         realTime && sendCommentSocket({ comment: commentData });
         return {
@@ -65,10 +66,10 @@ export default class CommentService {
           idTopic,
           status: TTCSconfig.STATUS_PUBLIC
         })
-        .skip(skip)
-        .limit(limit)
-        .populate("idUser")
-        .sort({"index": 1}), 
+          .skip(skip)
+          .limit(limit)
+          .populate("idUser")
+          .sort({ "createDate": -1 }),
         CommentModel.countDocuments({
           idTopic,
           status: TTCSconfig.STATUS_PUBLIC
@@ -83,4 +84,54 @@ export default class CommentService {
       throw new BadRequestError();
     }
   };
+
+  sendReactionComment = async (body: { idComment: string, idUser: string, type: number, realTime?: boolean }) => {
+    const { idComment, idUser, type, realTime = true } = body
+    try {
+      let comment = await CommentModel.findOne({ _id: idComment });
+      if(comment) {
+        let react = [...comment.react || []];
+        const updateComment = await CommentModel.findOneAndUpdate(
+          { _id: idComment },
+          {
+            $set: {
+              react : react.find(o => o.idUser === idUser) 
+              ? 
+              (react.find(o => o.type !== type)
+                ? [...react.filter(o => o.idUser !== idUser), { type, idUser }]
+                : react.filter(o => o.idUser !== idUser)
+              ) : [...react, {
+                type: type, 
+                idUser
+              }],
+              updateDate: Date.now(),
+            },
+          },
+          { new: true }
+        ).populate("idUser");
+        const commentData = new Comment(updateComment);
+        realTime && updateCommentSocket({ comment: commentData });
+        return {
+          status: TTCSconfig.STATUS_SUCCESS,
+        };
+      } else {
+        return {
+          status: TTCSconfig.STATUS_NO_EXIST,
+        };
+      }
+    } catch (error) {
+      throw new BadRequestError();
+    }
+  }
+
+  deleteComment =async (body : {idComment: string, idTopic: string, realTime?: boolean }) => {
+    const { idComment, realTime = true, idTopic } = body;
+    try {
+      const deleteCount = CommentModel.deleteOne({_id: idComment});
+      realTime && deleteCommentSocket({ id: idComment, idTopic });
+      return deleteCount
+    } catch (error) {
+      throw new BadRequestError();
+    }
+  }
 }

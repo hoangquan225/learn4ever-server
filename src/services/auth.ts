@@ -74,9 +74,9 @@ class AuthServices {
         let userInfo = new UserInfo(body);
         try {
             // const account = userInfo.account?.trim().toLowerCase();
-            const facebookId = userInfo.facebookId;
+            const googleId = userInfo.googleId;
 
-            const checkUserAcc: UserInfo | null = await UserModel.findOne({ facebookId });
+            const checkUserAcc: UserInfo | null = await UserModel.findOne({ googleId });
             if (!checkUserAcc) {
                 // luu vao db
                 const newUserInfo = {

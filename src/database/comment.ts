@@ -20,7 +20,7 @@ const CommentSchema = new mongoose.Schema<CommentDoc, ICommentSchema>(
             ref: userTableName
         },
         react: [{
-            type: Number, 
+            type: {type: Number}, 
             idUser: String
         }],
         status: Number,
@@ -30,7 +30,6 @@ const CommentSchema = new mongoose.Schema<CommentDoc, ICommentSchema>(
     },
     {
         versionKey: false,
-        timestamps: true,
     }
 );
 
