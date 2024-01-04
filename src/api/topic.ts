@@ -4,6 +4,7 @@ import asyncHandler from '../utils/async_handle';
 import Endpoint from '../submodule/common/endpoint';
 import TTCSconfig from '../submodule/common/config'
 import { Topic } from '../submodule/models/topic';
+import { authMiddleware } from '../middleware/authMiddlewares';
 
 const topicRouter = express.Router();
 const topicService = new TopicService();
@@ -26,7 +27,10 @@ topicRouter.post(Endpoint.UPDATE_TOPIC, asyncHandler(async (req, res) => {
     return res.json(data)
 }))
 
-topicRouter.post(Endpoint.GET_TOPIC_BY_COURSE, asyncHandler(async (req, res) => {
+topicRouter.post(
+    Endpoint.GET_TOPIC_BY_COURSE, 
+    authMiddleware, 
+    asyncHandler(async (req, res) => {
     const data = await topicService.getTopicsByCourse({
         idCourse: `${req.query.idCourse}`,
         type: Number(req.query.type),

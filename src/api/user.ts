@@ -53,9 +53,4 @@ userRouter.post(Endpoint.UPDATE_STUDYED_FOR_USER, asyncHandler(async (req, res) 
     return res.json(data)
 }))
 
-userRouter.post(Endpoint.GET_TOTAL_LEARNED_TOPIC, asyncHandler(async (req, res) => {
-    const data = await userService.getTotalLearnedTopic(req.body)
-    return res.json(data)
-}))
-
 export { userRouter };
