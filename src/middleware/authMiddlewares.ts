@@ -8,6 +8,8 @@ import { UserInfo } from '../submodule/models/user';
 
 export const authMiddleware = asyncHandler(async (req: any, res, next: any) => {
   const token = extractToken(req.headers.authorization || "")
+  console.log({authMiddleware: token});
+  
   if (!token) {
     return next(new UnauthorizedError('Token Invalid'));
     // throw res.json(new UnauthorizedError('Token Invalid'));

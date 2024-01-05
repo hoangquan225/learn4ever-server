@@ -5,6 +5,7 @@ import { UserInfo } from '../submodule/models/user';
 import UserService from '../services/user';
 import { isValidObjectId } from 'mongoose';
 import { BadRequestError } from '../common/errors';
+import { extractToken } from '../utils/helpers';
 
 const userRouter = express.Router();
 const userService = new UserService();
@@ -24,7 +25,8 @@ userRouter.post(Endpoint.UPDATE_USER, asyncHandler(async (req, res) => {
 }));
 
 userRouter.post(Endpoint.GET_USER_FROM_TOKEN, asyncHandler(async (req, res) => {
-    const { token } = <{ token: string }>req.body;
+    // const { token } = <{ token: string }>req.body;
+    const token = extractToken(req.headers.authorization || "")
     const users = await userService.checkUserFromToken(token);
     return res.json(users);
 }));
