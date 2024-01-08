@@ -10,7 +10,7 @@ import { topicRouter } from '../api/topic';
 import { uploadRouter } from '../api/upload';
 import { feedbackRouter } from '../api/feedback';
 import { statisticRouter } from '../api/CMS/statistic';
-import { commentRouter } from '../api/web/comment';
+import { commentRouter } from '../api/comment';
 
 const router = Router();
 
@@ -26,6 +26,6 @@ router.use(topicRouter);
 router.use(uploadRouter);
 router.use(feedbackRouter);
 router.use(statisticRouter);
-router.use(commentRouter)
+router.use(commentRouter);
 
 export { router as webRouters };

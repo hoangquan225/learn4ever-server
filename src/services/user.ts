@@ -25,6 +25,10 @@ export default class UserService {
         userInfo: UserInfo | null,
     }> => {
         const tokenDecode = jwtDecodeToken(body.token);
+        if (!tokenDecode || typeof tokenDecode === "string") return {
+            status: TTCSconfig.STATUS_FAIL,
+            userInfo: null
+        }
         let userInfo = new UserInfo(body.userInfo)
         let status = TTCSconfig.STATUS_SUCCESS;
 
@@ -50,6 +54,10 @@ export default class UserService {
         userInfo: UserInfo | null,
     }> => {
         const tokenDecode = jwtDecodeToken(token);
+        if (!tokenDecode || typeof tokenDecode === "string") return {
+            status: TTCSconfig.STATUS_FAIL,
+            userInfo: null
+        }
         let status = TTCSconfig.STATUS_SUCCESS;
         // find db 
         try {
@@ -72,6 +80,7 @@ export default class UserService {
     changePassword = async (body: { token: string, password: string, newPassword: string }): Promise<UserInfo> => {
         const { newPassword, token, password } = body;
         const tokenDecode = jwtDecodeToken(token);
+        if (!tokenDecode || typeof tokenDecode === "string") throw new BadRequestError();
 
         let userInfo = new UserInfo();
         try {
@@ -114,7 +123,7 @@ export default class UserService {
         score: number,
         correctQuestion: number,
         answers: Array<{
-            idQuestion : string, 
+            idQuestion: string,
             idAnswer: string
         }>
     }) => {
@@ -152,14 +161,14 @@ export default class UserService {
                         answers,
                     }]
                 }
-                
+
                 const res = await UserModel.findOneAndUpdate(
                     { _id: idUser }, 
                     { $set: { progress: newProgress } }, 
                     { new: true }
                 )
                 return {
-                    data: res, 
+                    data: res,
                     status: TTCSconfig.STATUS_SUCCESS
                 }
             } else {

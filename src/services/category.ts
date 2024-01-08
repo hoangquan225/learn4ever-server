@@ -17,6 +17,28 @@ export default class CategoryService {
     }
   };
 
+  getCategoryById = async (body: { id: string }) => {
+    try {
+      const category = await CategoryModel.findOne({
+        id: body.id
+      });
+      if (!category) return {
+        data: null,
+        status: TTCSconfig.STATUS_FAIL
+      }
+      return {
+        status: TTCSconfig.STATUS_SUCCESS,
+        data: category
+      }
+    } catch (error) {
+      console.log(error);
+      return {
+        data: null,
+        status: TTCSconfig.STATUS_FAIL
+      }
+    }
+  }
+
   getCategorysBySlug = async (body: { slug: string }) => {
     try {
       let status = TTCSconfig.STATUS_SUCCESS;
