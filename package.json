@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "hung",
   "engines": {
-    "node": "14.17.3"
+    "node": ">=14.20.1"
   },
   "main": "index.js",
   "scripts": {

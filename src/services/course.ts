@@ -63,6 +63,7 @@ export default class CourseService {
                 status
             }).populate('idCategory')
             if(!course) return { data: null, status: TTCSconfig.RESPONSIVE_NULL }
+
             if(isInfoTopic) {
                 const option = await this.getInfoTopicByCourse({idCourse: course?._id})
                 return {
